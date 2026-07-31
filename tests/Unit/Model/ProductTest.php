@@ -39,11 +39,11 @@ class ProductTest extends TestCase
     $this->assertEquals('2023-10-01', $product->createdAt);
   }
 
-  public function testSetCategory(): void
+  public function testSetCategories(): void
   {
     $product = new Product(1, 2, 'Test Product', 99.99, true, '2023-10-01');
-    $product->setCategory('Electronics');
+    $product->setCategories(['Electronics']);
 
-    $this->assertEquals('Electronics', $product->category);
+    $this->assertEquals(['Electronics'], $product->categories);
   }
 }
