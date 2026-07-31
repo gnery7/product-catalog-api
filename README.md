@@ -78,9 +78,9 @@ Modificações requisitadas pelo cliente em funcionalidades já existentes
 
 ### Filtros e Ordenamento
 Para a listagem de produtos:
-- [ ] Gostaria de poder filtrar os produtos ativos ou inativos;
-- [ ] Gostaria de poder filtrar os produtos por categoria;
-- [ ] Gostaria de poder ordenar os produtos por data de cadastro.
+- [x] Gostaria de poder filtrar os produtos ativos ou inativos;
+- [x] Gostaria de poder filtrar os produtos por categoria;
+- [x] Gostaria de poder ordenar os produtos por data de cadastro.
 
 ### Relatório
 - [ ] O relatório não está mostrando a coluna de logs corretamente, se possível, gostaria de trazer no seguinte formato:
@@ -193,6 +193,20 @@ O `composer test` falhava no teste do `hydrateByFetch`: ele fazia o preço em in
 ### Mudanças na API
 
 Um produto pode pertencer a várias categorias, e um campo de texto único não representa isso. Por isso o campo `category` (texto) virou `categories` (lista) nas rotas `GET /products` e `GET /products/{id}`. Quem consome a API precisa ajustar a leitura desse campo.
+
+### Filtros e ordenação na listagem de produtos
+
+A listagem `GET /products` agora aceita três parâmetros opcionais via query string:
+
+- `active`: filtra por produtos ativos (`1`) ou inativos (`0`)
+- `category`: filtra por categoria, recebendo o id dela (ex: `category=6`)
+- `order`: ordena pela data de cadastro, aceitando `asc` ou `desc`
+
+Os filtros podem ser combinados (ex: `/products?active=1&category=6&order=desc`) e a listagem retorna apenas os itens que estão dentro dos filtros. Sem nenhum parâmetro, a listagem continua retornando todos os produtos, como antes.
+
+Se algum parâmetro vier com valor inválido, a API responde com status 400 e uma mensagem dizendo qual foi o problema, por exemplo: `{"error": "valor do parametro active invalido"}`.
+
+No filtro de categoria, um produto que pertence a mais de uma categoria aparece na busca de qualquer uma delas, e o campo `categories` continua mostrando todas. A `king size bed` filtrada por `house` aparece com `["furniture", "house"]`.
 
 ### Observações
 Por algum motivo a listagem de produtos usava o id do usuário como o id da empresa. Funcionava porque o banco só tem uma empresa e todos os admins são dela, mas teria problemas no futuro. Modifiquei para descobrir a empresa do admin na tabela `admin_user` antes de filtrar.
