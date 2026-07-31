@@ -34,9 +34,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.report }}/",
+							"raw": "{{base_url}}{{report}}/",
 							"host": [
-								"{{ _.base_url }}{{ _.report }}"
+								"{{base_url}}{{report}}"
 							],
 							"path": [
 								""
@@ -75,9 +75,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.products }}/",
+							"raw": "{{base_url}}{{products}}/",
 							"host": [
-								"{{ _.base_url }}{{ _.products }}"
+								"{{base_url}}{{products}}"
 							],
 							"path": [
 								""
@@ -111,9 +111,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.products }}/10",
+							"raw": "{{base_url}}{{products}}/10",
 							"host": [
-								"{{ _.base_url }}{{ _.products }}"
+								"{{base_url}}{{products}}"
 							],
 							"path": [
 								"10"
@@ -160,9 +160,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.products }}/",
+							"raw": "{{base_url}}{{products}}/",
 							"host": [
-								"{{ _.base_url }}{{ _.products }}"
+								"{{base_url}}{{products}}"
 							],
 							"path": [
 								""
@@ -209,9 +209,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.products }}/19",
+							"raw": "{{base_url}}{{products}}/19",
 							"host": [
-								"{{ _.base_url }}{{ _.products }}"
+								"{{base_url}}{{products}}"
 							],
 							"path": [
 								"19"
@@ -245,9 +245,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.products }}/19",
+							"raw": "{{base_url}}{{products}}/19",
 							"host": [
-								"{{ _.base_url }}{{ _.products }}"
+								"{{base_url}}{{products}}"
 							],
 							"path": [
 								"19"
@@ -286,9 +286,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.categories }}/",
+							"raw": "{{base_url}}{{categories}}/",
 							"host": [
-								"{{ _.base_url }}{{ _.categories }}"
+								"{{base_url}}{{categories}}"
 							],
 							"path": [
 								""
@@ -322,9 +322,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.categories }}/4",
+							"raw": "{{base_url}}{{categories}}/4",
 							"host": [
-								"{{ _.base_url }}{{ _.categories }}"
+								"{{base_url}}{{categories}}"
 							],
 							"path": [
 								"4"
@@ -371,9 +371,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.categories }}/",
+							"raw": "{{base_url}}{{categories}}/",
 							"host": [
-								"{{ _.base_url }}{{ _.categories }}"
+								"{{base_url}}{{categories}}"
 							],
 							"path": [
 								""
@@ -420,9 +420,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.categories }}/7",
+							"raw": "{{base_url}}{{categories}}/7",
 							"host": [
-								"{{ _.base_url }}{{ _.categories }}"
+								"{{base_url}}{{categories}}"
 							],
 							"path": [
 								"7"
@@ -456,9 +456,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{ _.base_url }}{{ _.categories }}/7",
+							"raw": "{{base_url}}{{categories}}/7",
 							"host": [
-								"{{ _.base_url }}{{ _.categories }}"
+								"{{base_url}}{{categories}}"
 							],
 							"path": [
 								"7"
