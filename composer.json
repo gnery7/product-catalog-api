@@ -14,7 +14,7 @@
     "scripts":{
         "migrate": "./vendor/bin/phinx migrate",
         "create-migration": "./vendor/bin/phinx create",
-        "rollback-migration": "./vendor/bin/phinx rollback",
+        "rollback": "./vendor/bin/phinx rollback",
 
         "test": ["phpunit --testsuite unit --testdox"]
     },
