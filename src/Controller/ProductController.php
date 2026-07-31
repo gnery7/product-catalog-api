@@ -22,9 +22,20 @@ class ProductController
     public function getAll(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $adminUserId = $request->getHeader('admin_user_id')[0];
-        
+
         $stm = $this->service->getAll($adminUserId);
-        $response->getBody()->write(json_encode($stm->fetchAll()));
+        $fetchedProducts = $stm->fetchAll();
+        $products = [];
+        foreach ($fetchedProducts as $fetchedProduct) {
+            $categoryTitle = $fetchedProduct->category_title;
+            unset($fetchedProduct->category_title);
+            if (!isset($products[$fetchedProduct->id])) {
+                $fetchedProduct->categories = [];
+                $products[$fetchedProduct->id] = $fetchedProduct;
+            }
+            $products[$fetchedProduct->id]->categories[] = $categoryTitle;
+        }
+        $response->getBody()->write(json_encode(array_values($products)));
         return $response->withStatus(200);
     }
 
@@ -34,9 +45,12 @@ class ProductController
         $product = Product::hydrateByFetch($stm->fetch());
 
         $adminUserId = $request->getHeader('admin_user_id')[0];
-        $productCategory = $this->categoryService->getProductCategory($product->id)->fetch();
-        $fetchedCategory = $this->categoryService->getOne($adminUserId, $productCategory->id)->fetch();
-        $product->setCategory($fetchedCategory->title);
+        $productCategories = $this->categoryService->getProductCategory($adminUserId, $product->id)->fetchAll();
+        $categoryTitles = [];
+        foreach ($productCategories as $productCategory) {
+            $categoryTitles[] = $productCategory->title;
+        }
+        $product->setCategories($categoryTitles);
 
         $response->getBody()->write(json_encode($product));
         return $response->withStatus(200);

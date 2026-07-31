@@ -15,10 +15,10 @@ class ProductService
     public function getAll($adminUserId)
     {
         $query = "
-            SELECT p.*, c.title as category
+            SELECT p.*, c.title as category_title
             FROM product p
             INNER JOIN product_category pc ON pc.product_id = p.id
-            INNER JOIN category c ON c.id = pc.id
+            INNER JOIN category c ON c.id = pc.cat_id
             WHERE p.company_id = {$adminUserId}
         ";
 
