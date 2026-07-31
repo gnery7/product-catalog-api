@@ -22,8 +22,33 @@ class ProductController
     public function getAll(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $adminUserId = $request->getHeader('admin_user_id')[0];
+        $queryParams = $request->getQueryParams();
 
-        $stm = $this->service->getAll($adminUserId);
+        $filters = [];
+        if (isset($queryParams['active'])) {
+            if (!in_array($queryParams['active'], ['0', '1'], true)) {
+                $response->getBody()->write(json_encode(['error' => 'valor do parametro active invalido']));
+                return $response->withStatus(400);
+            }
+            $filters['active'] = $queryParams['active'];
+        }
+        if (isset($queryParams['category'])) {
+            if (!ctype_digit($queryParams['category'])) {
+                $response->getBody()->write(json_encode(['error' => 'valor do parametro category invalido']));
+                return $response->withStatus(400);
+            }
+            $filters['category'] = $queryParams['category'];
+        }
+        if (isset($queryParams['order'])) {
+            if (!in_array($queryParams['order'], ['asc', 'desc'], true)) {
+                $response->getBody()->write(json_encode(['error' => 'valor do parametro order invalido']));
+                return $response->withStatus(400);
+            }
+            $filters['order'] = $queryParams['order'];
+        }
+
+        $stm = $this->service->getAll($adminUserId, $filters);
+
         $fetchedProducts = $stm->fetchAll();
         $products = [];
         foreach ($fetchedProducts as $fetchedProduct) {

@@ -12,7 +12,7 @@ class ProductService
         $this->pdo = DB::connect();
     }
 
-    public function getAll($adminUserId)
+    public function getAll($adminUserId, $filters = [])
     {
         $query = "
             SELECT p.*, c.title as category_title
@@ -21,10 +21,22 @@ class ProductService
             INNER JOIN category c ON c.id = pc.cat_id
             WHERE p.company_id = {$this->getCompanyFromAdminUser($adminUserId)}
         ";
+        $binds = [];
+
+        if (isset($filters['active'])) {
+            $query .= " AND p.active = :active";
+            $binds[':active'] = $filters['active'];
+        }
+        if (isset($filters['category'])) {
+            $query .= " AND p.id IN (SELECT product_id FROM product_category WHERE cat_id = :category)";
+            $binds[':category'] = $filters['category'];
+        }
+        if (isset($filters['order'])) {
+            $query .= " ORDER BY p.created_at " . strtoupper($filters['order']);
+        }
 
         $stm = $this->pdo->prepare($query);
-
-        $stm->execute();
+        $stm->execute($binds);
 
         return $stm;
     }
