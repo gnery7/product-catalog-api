@@ -171,4 +171,13 @@ Para efetuar a criação do ambiente docker, partimos de algumas premissas:
 - [ ] Escrever um script "_`check_deploy.sh`_" que faz todas as validações implementadas como uma pipeline e determina se o código está pronto para produção.
 
 ## Suas Respostas, Dúvidas e Observações
-_[Adicione  aqui suas respostas, dúvidas e observações]_
+Observações: Durante o preparo do ambiente do docker, eu notei que no `README` o comando de reverter migration era `rollback`, no `composer.json` era `rollback-migration`, optei por alterar no `composer.json` para apenas `rollback` para seguir o `README`.
+
+
+### Ambiente Docker
+- Subir a aplicação: `docker compose up -d` (porta 8000)
+- Instalar dependências: `docker compose run --rm app composer install`
+- Rodar migrations: `docker compose run --rm app composer migrate`
+- Criar migration: `docker compose run --rm app composer create-migration`
+- Reverter migration: `docker compose run --rm app composer rollback`
+- Rodar testes: `docker compose run --rm app composer test`
