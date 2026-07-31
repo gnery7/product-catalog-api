@@ -166,9 +166,10 @@ class ProductService
     public function getLog($id)
     {
         $stm = $this->pdo->prepare("
-            SELECT *
-            FROM product_log
-            WHERE product_id = {$id}
+            SELECT pl.*, au.name as admin_user_name
+            FROM product_log pl
+            LEFT JOIN admin_user au ON au.id = pl.admin_user_id
+            WHERE pl.product_id = {$id}
         ");
         $stm->execute();
 

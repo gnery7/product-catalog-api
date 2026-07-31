@@ -21,7 +21,27 @@ class ReportController
     public function generate(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $adminUserId = $request->getHeader('admin_user_id')[0];
-        
+
+        $actionLabels = [
+            'create' => 'Criação',
+            'update' => 'Atualização',
+            'delete' => 'Remoção',
+        ];
+
+        $stm = $this->productService->getAll($adminUserId);
+        $fetchedProducts = $stm->fetchAll();
+
+        $products = [];
+        foreach ($fetchedProducts as $fetchedProduct) {
+            $categoryTitle = $fetchedProduct->category_title;
+            unset($fetchedProduct->category_title);
+            if (!isset($products[$fetchedProduct->id])) {
+                $fetchedProduct->categories = [];
+                $products[$fetchedProduct->id] = $fetchedProduct;
+            }
+            $products[$fetchedProduct->id]->categories[] = $categoryTitle;
+        }
+
         $data = [];
         $data[] = [
             'Id do produto',
@@ -32,26 +52,33 @@ class ReportController
             'Data de Criação',
             'Logs de Alterações'
         ];
-        
-        $stm = $this->productService->getAll($adminUserId);
-        $products = $stm->fetchAll();
 
-        foreach ($products as $i => $product) {
+        foreach ($products as $product) {
             $stm = $this->companyService->getNameById($product->company_id);
             $companyName = $stm->fetch()->name;
 
             $stm = $this->productService->getLog($product->id);
             $productLogs = $stm->fetchAll();
-            
-            $data[$i+1][] = $product->id;
-            $data[$i+1][] = $companyName;
-            $data[$i+1][] = $product->title;
-            $data[$i+1][] = $product->price;
-            $data[$i+1][] = $product->category;
-            $data[$i+1][] = $product->created_at;
-            $data[$i+1][] = $productLogs;
+
+            $formattedLogs = [];
+            foreach ($productLogs as $productLog) {
+                $userName = $productLog->admin_user_name ?? 'usuario desconhecido';
+                $actionLabel = $actionLabels[$productLog->action] ?? $productLog->action;
+                $logDate = date('d/m/Y H:i:s', strtotime($productLog->timestamp));
+                $formattedLogs[] = "({$userName}, {$actionLabel}, {$logDate})";
+            }
+
+            $row = [];
+            $row[] = $product->id;
+            $row[] = $companyName;
+            $row[] = $product->title;
+            $row[] = $product->price;
+            $row[] = implode(', ', $product->categories);
+            $row[] = $product->created_at;
+            $row[] = implode(',<br>', $formattedLogs);
+            $data[] = $row;
         }
-        
+
         $report = "<table style='font-size: 10px;'>";
         foreach ($data as $row) {
             $report .= "<tr>";
@@ -61,8 +88,8 @@ class ReportController
             $report .= "</tr>";
         }
         $report .= "</table>";
-        
+
         $response->getBody()->write($report);
-        return $response->withStatus(200)->withHeader('Content-Type', 'text/html');
+        return $response->withStatus(200)->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }
