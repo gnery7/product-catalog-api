@@ -23,7 +23,7 @@ class Product
             (int)$fetch->id,
             (int)$fetch->company_id,
             (string)$fetch->title,
-            (int)$fetch->price,
+            (float)$fetch->price,
             (bool)$fetch->active,
             (string)$fetch->created_at
         );
