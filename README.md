@@ -72,9 +72,9 @@ Abaixo, as solicitações do cliente:
 Modificações requisitadas pelo cliente em funcionalidades já existentes
 
 ### Categorias
-- [ ] A categoria está vindo errada na listagem de produtos para alguns casos (_exemplo: produto `blue trouser` está vindo na categoria `phone`_);
-- [ ] Alguns produtos estão vindo com a categoria `null` ao serem pesquisados individualmente (_exemplo: produto `iphone 8`_);
-- [ ] Cadastrei o produto `king size bed` em mais de uma categoria, mas ele aparece **apenas** na categoria `furniture` na busca individual do produto.
+- [x] A categoria está vindo errada na listagem de produtos para alguns casos (_exemplo: produto `blue trouser` está vindo na categoria `phone`_);
+- [x] Alguns produtos estão vindo com a categoria `null` ao serem pesquisados individualmente (_exemplo: produto `iphone 8`_);
+- [x] Cadastrei o produto `king size bed` em mais de uma categoria, mas ele aparece **apenas** na categoria `furniture` na busca individual do produto.
 
 ### Filtros e Ordenamento
 Para a listagem de produtos:
@@ -96,7 +96,7 @@ Para a listagem de produtos:
 - [ ] Gostaria de saber qual usuário mudou o preço do produto `iphone 8` por último.
 
 ### Correção de bug
-- [ ] Ao rodar os teste unitários com `composer test` são apontados erros. Eles precisam ser resolvidos, com documentação sobre a causa e a solução.
+- [x] Ao rodar os teste unitários com `composer test` são apontados erros. Eles precisam ser resolvidos, com documentação sobre a causa e a solução.
 
 ## Features
 Novas funcionalidades requisitadas pelo cliente
@@ -159,9 +159,9 @@ Para efetuar a criação do ambiente docker, partimos de algumas premissas:
 - A funcionalidade de **PHP** deve rodar na porta **8000** do host.
 
 ### Itens obrigatórios
-- [ ] Criar um ambiente docker que sobe a aplicação **PHP** na porta **8000**;
-- [ ] Possibilitar que as **_migrations_ possam ser executadas/criadas por docker** (especificar comando);
-- [ ] Possibilitar que os **_testes unitários_ sejam executados por docker** (especificar comando).
+- [x] Criar um ambiente docker que sobe a aplicação **PHP** na porta **8000**;
+- [x] Possibilitar que as **_migrations_ possam ser executadas/criadas por docker** (especificar comando);
+- [x] Possibilitar que os **_testes unitários_ sejam executados por docker** (especificar comando).
 
 ### Desafios
 - [ ] Substituir o banco serverless **SQLite** por um banco como **MySQL**/**PostgreSQL**/outro e servir por container;
@@ -171,8 +171,33 @@ Para efetuar a criação do ambiente docker, partimos de algumas premissas:
 - [ ] Escrever um script "_`check_deploy.sh`_" que faz todas as validações implementadas como uma pipeline e determina se o código está pronto para produção.
 
 ## Suas Respostas, Dúvidas e Observações
-Observações: Durante o preparo do ambiente do docker, eu notei que no `README` o comando de reverter migration era `rollback`, no `composer.json` era `rollback-migration`, optei por alterar no `composer.json` para apenas `rollback` para seguir o `README`.
 
+### Correções de bugs
+
+**Categoria errada na listagem de produtos**
+
+O cliente relatou que alguns produtos vinham com a categoria errada na listagem, como o `blue trouser` aparecendo na categoria `phone`. O problema estava no join da listagem: ele usava o id da linha da `product_category` em vez do `cat_id`, então a categoria vinha sem relação com o produto. Ajustei o join para o `cat_id` e as categorias começaram a puxar corretamente. Com isso, vários produtos que nem estavam aparecendo voltaram para a listagem (12 dos 18 estavam invisíveis, porque o join errado descartava eles).
+
+**Categoria null na busca individual**
+
+O cliente relatou que alguns produtos vinham com a categoria `null` ao serem pesquisados individualmente, como o `iphone 8`. Isso acontecia porque as categorias padrão têm `company_id` NULL no banco (elas não pertencem a nenhuma empresa específica, valem para todas), e a busca exigia `company_id` igual à empresa do admin, filtro que o NULL nunca passava. Arrumei o filtro para aceitar também os casos em que o `company_id` é NULL.
+
+**Produto em várias categorias aparecendo em apenas uma**
+
+O cliente cadastrou a `king size bed` em mais de uma categoria, mas ela aparecia apenas na `furniture` na busca individual. O motivo é que o código buscava só a primeira categoria do produto e o model tinha um campo único `category` no singular. Refiz para buscar todas as categorias do produto e o campo virou `categories`, retornando a lista com o nome de cada uma.
+
+**Erros nos testes unitários**
+
+O `composer test` falhava no teste do `hydrateByFetch`: ele fazia o preço em int, então de 99.99 ficava 99, e o teste comparava com 99.99. A solução foi trocar o cast para float. O mesmo bug truncava o preço na API de verdade, a `king size bed` de 4520.83 ficava 4520 na busca individual.
+
+### Mudanças na API
+
+Um produto pode pertencer a várias categorias, e um campo de texto único não representa isso. Por isso o campo `category` (texto) virou `categories` (lista) nas rotas `GET /products` e `GET /products/{id}`. Quem consome a API precisa ajustar a leitura desse campo.
+
+### Observações
+Por algum motivo a listagem de produtos usava o id do usuário como o id da empresa. Funcionava porque o banco só tem uma empresa e todos os admins são dela, mas teria problemas no futuro. Modifiquei para descobrir a empresa do admin na tabela `admin_user` antes de filtrar.
+
+Observações: Durante o preparo do ambiente do docker, eu notei que no `README` o comando de reverter migration era `rollback`, no `composer.json` era `rollback-migration`, optei por alterar no `composer.json` para apenas `rollback` para seguir o `README`.
 
 ### Ambiente Docker
 - Subir a aplicação: `docker compose up -d` (porta 8000)
