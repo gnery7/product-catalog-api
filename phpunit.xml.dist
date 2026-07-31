@@ -1,0 +1,19 @@
+<phpunit
+  bootstrap="tests/bootstrap.php"
+  failOnRisky="true"
+  failOnWarning="true"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+
+  convertErrorsToExceptions   = "true"
+  convertNoticesToExceptions  = "true"
+  convertWarningsToExceptions = "true"
+  
+  colors="true"
+>
+  <testsuites>
+    <testsuite name="unit">
+      <directory>./tests/Unit</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>

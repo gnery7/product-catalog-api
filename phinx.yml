@@ -1,0 +1,16 @@
+paths:
+ migrations: ./db/migrations
+ seeds: ./db/seeds
+
+environments:
+ default_migration_table: phinxlog
+ default_environment: development
+
+ development:
+  adapter: sqlite
+  name: ./db/db
+
+templates:
+  file: ./db/migrations/templates/template_migration.php.template
+
+version_order: creation
