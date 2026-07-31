@@ -83,7 +83,7 @@ Para a listagem de produtos:
 - [x] Gostaria de poder ordenar os produtos por data de cadastro.
 
 ### Relatório
-- [ ] O relatório não está mostrando a coluna de logs corretamente, se possível, gostaria de trazer no seguinte formato:
+- [x] O relatório não está mostrando a coluna de logs corretamente, se possível, gostaria de trazer no seguinte formato:
   (Nome do usuário, Tipo de alteração e Data),
   (Nome do usuário, Tipo de alteração e Data),
   (Nome do usuário, Tipo de alteração e Data)
@@ -93,7 +93,7 @@ Para a listagem de produtos:
   (Joe Doe, Remoção, 21/12/2023 14:52:50)
 
 ### Logs
-- [ ] Gostaria de saber qual usuário mudou o preço do produto `iphone 8` por último.
+- [x] Gostaria de saber qual usuário mudou o preço do produto `iphone 8` por último.
 
 ### Correção de bug
 - [x] Ao rodar os teste unitários com `composer test` são apontados erros. Eles precisam ser resolvidos, com documentação sobre a causa e a solução.
@@ -190,6 +190,14 @@ O cliente cadastrou a `king size bed` em mais de uma categoria, mas ela aparecia
 
 O `composer test` falhava no teste do `hydrateByFetch`: ele fazia o preço em int, então de 99.99 ficava 99, e o teste comparava com 99.99. A solução foi trocar o cast para float. O mesmo bug truncava o preço na API de verdade, a `king size bed` de 4520.83 ficava 4520 na busca individual.
 
+**Coluna de logs do relatório**
+
+O cliente relatou que o relatório não mostrava a coluna de logs corretamente e pediu um formato específico. A coluna imprimia a palavra "Array" no lugar dos dados. Para chegar ao formato solicitado (Nome do usuário, Tipo de alteração, Data), fiz a consulta dos logs buscar também o nome do usuário (antes só vinha o id), os tipos de alteração agora são exibidos em português como no exemplo (Criação, Atualização, Remoção) e a data segue o padrão pedido (dd/mm/aaaa hh:mm:ss). Também corrigi dois efeitos que a minha alteração das categorias tinha causado no relatório: produtos com mais de uma categoria apareciam duplicados e a coluna de categorias vinha vazia. Agora cada produto aparece uma vez, com as categorias agrupadas.
+
+**Qual usuário mudou o preço do iphone 8 por último**
+
+Não existe registro de qual campo foi alterado, os logs só guardam que o produto sofreu uma alteração. As duas últimas atualizações do iphone 8 foram de rivers às 18:08:12 e de corin às 18:12:10 do dia 22/12/2023. Então quem mudou o preço por último foi corin.
+
 ### Mudanças na API
 
 Um produto pode pertencer a várias categorias, e um campo de texto único não representa isso. Por isso o campo `category` (texto) virou `categories` (lista) nas rotas `GET /products` e `GET /products/{id}`. Quem consome a API precisa ajustar a leitura desse campo.
@@ -208,10 +216,15 @@ Se algum parâmetro vier com valor inválido, a API responde com status 400 e um
 
 No filtro de categoria, um produto que pertence a mais de uma categoria aparece na busca de qualquer uma delas, e o campo `categories` continua mostrando todas. A `king size bed` filtrada por `house` aparece com `["furniture", "house"]`.
 
-### Observações
-Por algum motivo a listagem de produtos usava o id do usuário como o id da empresa. Funcionava porque o banco só tem uma empresa e todos os admins são dela, mas teria problemas no futuro. Modifiquei para descobrir a empresa do admin na tabela `admin_user` antes de filtrar.
 
-Observações: Durante o preparo do ambiente do docker, eu notei que no `README` o comando de reverter migration era `rollback`, no `composer.json` era `rollback-migration`, optei por alterar no `composer.json` para apenas `rollback` para seguir o `README`.
+### Observações (na ordem do desenvolvimento)
+
+1. Durante o preparo do ambiente do docker, eu notei que no `README` o comando de reverter migration era `rollback`, no `composer.json` era `rollback-migration`, optei por alterar no `composer.json` para apenas `rollback` para seguir o `README`.
+
+2. Por algum motivo a listagem de produtos usava o id do usuário como o id da empresa. Funcionava porque o banco só tem uma empresa e todos os admins são dela, mas teria problemas no futuro. Modifiquei para descobrir a empresa do admin na tabela `admin_user` antes de filtrar.
+
+3. Mexendo na tabela de logs achei dois registros apontando para usuários que não existem no banco (ids 5 e 6). Com o LEFT JOIN esses logs continuam aparecendo no relatório, e no lugar do nome exibo "usuario desconhecido", para manter a informação da alteração mesmo sem saber quem fez.
+
 
 ### Ambiente Docker
 - Subir a aplicação: `docker compose up -d` (porta 8000)
