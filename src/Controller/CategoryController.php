@@ -45,6 +45,29 @@ class CategoryController
         }
     }
 
+    public function insertTranslations(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $body = $request->getParsedBody();
+
+        if (!isset($body['translations']) || !is_array($body['translations']) || $body['translations'] === []) {
+            $response->getBody()->write(json_encode(['error' => 'lista de translations invalida ou vazia']));
+            return $response->withStatus(400);
+        }
+        foreach ($body['translations'] as $translation) {
+            if (!isset($translation['lang_code']) || !isset($translation['label'])) {
+                $response->getBody()->write(json_encode(['error' => 'toda traducao precisa de lang_code e label']));
+                return $response->withStatus(400);
+            }
+        }
+
+        if ($this->service->insertTranslations($args['id'], $body['translations'])) {
+            return $response->withStatus(200);
+        } else {
+            $response->getBody()->write(json_encode(['error' => 'traducao repetida, nenhuma foi cadastrada']));
+            return $response->withStatus(400);
+        }
+    }
+
     public function updateOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $body = $request->getParsedBody();

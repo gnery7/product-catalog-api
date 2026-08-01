@@ -78,6 +78,35 @@ class CategoryService
 
         return $stm->execute();
     }
+        public function insertTranslations($categoryId, $translations)
+    {
+        $this->pdo->beginTransaction();
+        $stm = $this->pdo->prepare("
+            INSERT INTO category_translation (
+                category_id,
+                lang_code,
+                label
+            ) VALUES (
+                :category_id,
+                :lang_code,
+                :label
+            )
+        ");
+        try {
+            foreach ($translations as $translation) {
+                $stm->execute([
+                    ':category_id' => $categoryId,
+                    ':lang_code' => $translation['lang_code'],
+                    ':label' => $translation['label'],
+                ]);
+            }
+        } catch (\PDOException $e) {
+            $this->pdo->rollBack();
+            return false;
+        }
+        $this->pdo->commit();
+        return true;
+    }
 
     public function updateOne($id, $body, $adminUserId)
     {
