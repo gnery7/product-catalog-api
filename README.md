@@ -105,7 +105,7 @@ Novas funcionalidades requisitadas pelo cliente
 > Preste atenção, funcionalidades que exijam mudanças no banco de dados devem conter tais modificações em uma ou mais **migrations**.
 
 ### Traduções
-- [ ] Quero disponibilizar meu sistema para fora do país, crie uma funcionalidade de cadastro de traduções para as categorias que segue o seguinte contrato:
+- [x] Quero disponibilizar meu sistema para fora do país, crie uma funcionalidade de cadastro de traduções para as categorias que segue o seguinte contrato:
 ```
 POST "$base_url/categories/:id"
 
@@ -122,10 +122,10 @@ POST "$base_url/categories/:id"
   ]
 }
 ```
-- [ ] Não deve ser possível cadastrar traduções repetidas, se uma única tradução repetida foi enviada, nenhuma deve persistir;
-- [ ] Ao buscar por produtos/categorias, o parâmetro adicional opcional "_`lang`_" pode ser passado para determinar a linguagem em que a categoria deve ser retornada;
-- [ ] Caso não haja categoria correspondente ou não seja especificado por parâmetro, retornar em inglês;
-- [ ] Inclua a rota e as modificações na coleção do Postman no repositório.
+- [x] Não deve ser possível cadastrar traduções repetidas, se uma única tradução repetida foi enviada, nenhuma deve persistir;
+- [x] Ao buscar por produtos/categorias, o parâmetro adicional opcional "_`lang`_" pode ser passado para determinar a linguagem em que a categoria deve ser retornada;
+- [x] Caso não haja categoria correspondente ou não seja especificado por parâmetro, retornar em inglês;
+- [x] Inclua a rota e as modificações na coleção do Postman no repositório.
 
 ### Estoque
 Além das informações já disponíveis do produto, desejo acrescentar também uma contagem de estoque para cada, a qual deve seguir algumas regras:
@@ -216,6 +216,13 @@ Se algum parâmetro vier com valor inválido, a API responde com status 400 e um
 
 No filtro de categoria, um produto que pertence a mais de uma categoria aparece na busca de qualquer uma delas, e o campo `categories` continua mostrando todas. A `king size bed` filtrada por `house` aparece com `["furniture", "house"]`.
 
+### Traduções de categorias
+
+Criei a rota `POST /categories/:id` seguindo o contrato solicitado: ela recebe uma lista de traduções (com `lang_code` e `label`) e cadastra todas de uma vez. O cadastro é atômico: se uma única tradução do lote for repetida (dentro do próprio lote ou já existente no banco), nenhuma é cadastrada e a API responde 400 com a mensagem "traducao repetida, nenhuma foi cadastrada".
+
+Nas buscas de produtos e de categorias existe agora o parâmetro opcional `lang` (ex: `/products?lang=pt`), que retorna os nomes das categorias traduzidos. Sem o parâmetro, ou quando a categoria não tem tradução no idioma pedido, o texto vem em inglês, que é o padrão.
+
+Para guardar as traduções, criei uma migration com a tabela `category_translation` e um índice único de categoria + idioma, que faz o próprio banco impedir traduções repetidas. A migration tem o `down()` funcional (testei aplicar, reverter e reaplicar).
 
 ### Observações (na ordem do desenvolvimento)
 
@@ -225,6 +232,11 @@ No filtro de categoria, um produto que pertence a mais de uma categoria aparece 
 
 3. Mexendo na tabela de logs achei dois registros apontando para usuários que não existem no banco (ids 5 e 6). Com o LEFT JOIN esses logs continuam aparecendo no relatório, e no lugar do nome exibo "usuario desconhecido", para manter a informação da alteração mesmo sem saber quem fez.
 
+4. Durante o desenvolvimento do fallback das traduções, avaliei fazer a escolha do texto via PHP ou via SQL, e tomei a decisão de usar o COALESCE no SQL, que roda em qualquer banco. Assim as operações de conjunto (filtros e joins) ficam no banco e a apresentação fica no PHP.
+
+5. Quando cheguei nas migrations e tive que usar o Phinx, foi meu primeiro contato com a biblioteca. Fiz algumas pesquisas sobre o assunto para entender melhor sua função e o porquê de se usar migrations. Meu primeiro teste deu bem errado: tentei criar o arquivo na pasta errada, o nome da classe não batia com o padrão que o Phinx espera e a pasta de destino estava sem permissão. Depois de entender o fluxo certo (criar pelo `composer create-migration` via docker, que gera o arquivo no lugar e com o nome padronizado), a migration saiu reversível e validada nos dois sentidos.
+
+6. Atualizei a coleção do Postman com as novas funções: adicionei a insertTranslations (que também facilita testar a estrutura do lang), documentei os parâmetros de busca nas requests e tirei uma série de "/" no final das URLs que causavam erro 404.
 
 ### Ambiente Docker
 - Subir a aplicação: `docker compose up -d` (porta 8000)
