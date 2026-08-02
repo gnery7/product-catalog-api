@@ -101,4 +101,47 @@ class CommentService
 
         return true;
     }
+
+        public function deleteOne($commentId, $adminUserId)
+    {
+        $stm = $this->pdo->prepare("
+            SELECT admin_user_id
+            FROM comment
+            WHERE id = :id
+        ");
+        $stm->execute([':id' => $commentId]);
+        $comment = $stm->fetch();
+        if ($comment === false) {
+            return false;
+        }
+        if ($comment->admin_user_id != $adminUserId) {
+            return 'proibido';
+        }
+
+        $ids = [$commentId];
+        $currentLevel = [$commentId];
+        while (!empty($currentLevel)) {
+            $placeholders = implode(',', array_fill(0, count($currentLevel), '?'));
+            $stm = $this->pdo->prepare("SELECT id FROM comment WHERE parent_id IN ({$placeholders})");
+            $stm->execute($currentLevel);
+            $currentLevel = array_column($stm->fetchAll(\PDO::FETCH_ASSOC), 'id');
+            $ids = array_merge($ids, $currentLevel);
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        $this->pdo->beginTransaction();
+        try {
+            $stm = $this->pdo->prepare("DELETE FROM comment_like WHERE comment_id IN ({$placeholders})");
+            $stm->execute($ids);
+            $stm = $this->pdo->prepare("DELETE FROM comment WHERE id IN ({$placeholders})");
+            $stm->execute($ids);
+        } catch (\PDOException $e) {
+            $this->pdo->rollBack();
+            return false;
+        }
+        $this->pdo->commit();
+
+        return true;
+    }
 }

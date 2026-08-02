@@ -64,4 +64,19 @@ class CommentController
         }
         return $response->withStatus(404);
     }
+        public function deleteOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $adminUserId = $request->getHeader('admin_user_id')[0];
+
+        $result = $this->service->deleteOne($args['id'], $adminUserId);
+
+        if ($result === true) {
+            return $response->withStatus(200);
+        }
+        if ($result === 'proibido') {
+            $response->getBody()->write(json_encode(['error' => 'so e possivel remover os proprios comentarios']));
+            return $response->withStatus(403);
+        }
+        return $response->withStatus(404);
+    }
 }
