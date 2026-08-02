@@ -165,7 +165,7 @@ Para efetuar a criação do ambiente docker, partimos de algumas premissas:
 
 ### Desafios
 - [ ] Substituir o banco serverless **SQLite** por um banco como **MySQL**/**PostgreSQL**/outro e servir por container;
-- [ ] Escrever **novos testes unitários** para funcionalidades faltantes;
+- [x] Escrever **novos testes unitários** para funcionalidades faltantes;
 - [ ] Implementar um **Linter** e disponibilizar por docker (especificar comando);
 - [ ] Implementar **análise estática** e disponibilizar por docker (especificar comando);
 - [ ] Escrever um script "_`check_deploy.sh`_" que faz todas as validações implementadas como uma pipeline e determina se o código está pronto para produção.
@@ -248,6 +248,12 @@ Na remoção, toda a cascata vai junto: as respostas do comentário (e as respos
 
 A listagem retorna a estrutura hierárquica: os comentários principais do produto, cada um com autor, contagem de curtidas e a lista de respostas aninhadas, respostas dentro de respostas.
 
+### Testes automatizados novos
+
+Escrevi testes automatizados novos cobrindo a atomicidade do cadastro de traduções de categorias, as regras da estrutura de comentários (herança do produto nas respostas, curtida duplicada, permissão de remoção e a cascata) e os filtros da listagem de produtos (ativo/inativo, categoria, estoque mínimo e tradução). Os testes rodam contra um banco SQLite em memória, isolado do banco de desenvolvimento, para não depender nem interferir nos dados reais.
+
+Para viabilizar isso, os services passaram a aceitar a conexão do banco por parâmetro no construtor, além de continuarem buscando a conexão padrão sozinhos quando nenhuma é informada.
+
 ### Observações (na ordem do desenvolvimento)
 
 1. Durante o preparo do ambiente do docker, eu notei que no `README` o comando de reverter migration era `rollback`, no `composer.json` era `rollback-migration`, optei por alterar no `composer.json` para apenas `rollback` para seguir o `README`.
@@ -263,6 +269,8 @@ A listagem retorna a estrutura hierárquica: os comentários principais do produ
 6. Atualizei a coleção do Postman com as novas funções: adicionei a insertTranslations (que também facilita testar a estrutura do lang), documentei os parâmetros de busca nas requests e tirei uma série de "/" no final das URLs que causavam erro 404.
 
 7. Na remoção de comentários eu pensei primeiro em fazer no estilo do Reddit: o comentário apagado continuaria na conversa como "comentario removido", preservando as respostas das outras pessoas e mantendo o dado no banco. Mas pensando na proposta do projeto, que é uma loja, não faz sentido manter esse histórico de discussão. Decidi que apagar remove de verdade, levando junto toda a cascata de respostas e curtidas.
+
+8. Nesse desafio dos testes automatizados eu entendi melhor como o PHPUnit testa código que depende de banco de dados, usando um banco SQLite em memória. No meio do caminho tive um problema em que o banco de teste retornava um array em vez de um objeto, porque faltava configurar o mesmo modo de busca que o `DB.php` do projeto usa. Corrigindo isso, consegui concluir a cobertura dos testes.
 
 ### Ambiente Docker
 - Subir a aplicação: `docker compose up -d` (porta 8000)
