@@ -100,7 +100,14 @@
 									"value": "pt",
 									"type": "text",
 									"disabled": true
+								},
+								{
+									"key": "min_stock",
+									"value": "1",
+									"type": "text",
+									"disabled": true
 								}
+
 							]
 						}
 					},
@@ -172,7 +179,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"company_id\": 1,\n\t\"title\": \"nome do produto\",\n\t\"price\": 123.4,\n\t\"active\": true,\n\t\"category_id\": 1\n}",
+							"raw": "{\n\t\"company_id\": 1,\n\t\"title\": \"nome do produto\",\n\t\"price\": 123.4,\n\t\"active\": true,\n\t\"category_id\": 1,\n\t\"stock\": 25\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -218,7 +225,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"company_id\": 1,\n\t\"title\": \"nome do produto\",\n\t\"price\": 123.4,\n\t\"active\": true,\n\t\"category_id\": 1\n}",
+							"raw": "{\n\t\"company_id\": 1,\n\t\"title\": \"nome do produto\",\n\t\"price\": 123.4,\n\t\"active\": true,\n\t\"category_id\": 1,\n\t\"stock\": 40\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -311,6 +318,12 @@
 							{
 								"key": "lang",
 								"value": "pt",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "min_stock",
+								"value": "1",
 								"type": "text",
 								"disabled": true
 							}
