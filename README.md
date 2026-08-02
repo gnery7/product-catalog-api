@@ -129,9 +129,9 @@ POST "$base_url/categories/:id"
 
 ### Estoque
 Além das informações já disponíveis do produto, desejo acrescentar também uma contagem de estoque para cada, a qual deve seguir algumas regras:
-- [ ] Posso cadastrar a quantidade do estoque assim que cadastro um produto, mas se não for informado assumo que o estoque é _0_;
-- [ ] Posso atualizar o estoque de um produto;
-- [ ] Ao buscar um produto, posso filtrar por uma quantidade mínima em estoque.
+- [x] Posso cadastrar a quantidade do estoque assim que cadastro um produto, mas se não for informado assumo que o estoque é _0_;
+- [x] Posso atualizar o estoque de um produto;
+- [x] Ao buscar um produto, posso filtrar por uma quantidade mínima em estoque.
 
 ### Comentários
 Quero que os usuários do sistema possam discutir sobre os produtos em uma área de comentários.
@@ -223,6 +223,14 @@ Criei a rota `POST /categories/:id` seguindo o contrato solicitado: ela recebe u
 Nas buscas de produtos e de categorias existe agora o parâmetro opcional `lang` (ex: `/products?lang=pt`), que retorna os nomes das categorias traduzidos. Sem o parâmetro, ou quando a categoria não tem tradução no idioma pedido, o texto vem em inglês, que é o padrão.
 
 Para guardar as traduções, criei uma migration com a tabela `category_translation` e um índice único de categoria + idioma, que faz o próprio banco impedir traduções repetidas. A migration tem o `down()` funcional (testei aplicar, reverter e reaplicar).
+
+### Estoque de produtos
+
+Os produtos agora têm uma contagem de estoque. No cadastro, o campo `stock` pode ser informado junto dos outros dados e, se não for informado, o estoque começa em 0. O campo não aceita valor negativo ou inválido, nesses casos a API responde 400.
+
+A atualização é feita pelo `PUT /products/{id}` normal, mandando o campo `stock` no corpo. Se o campo não vier na atualização, o estoque atual é mantido. Essa regra é diferente da regra do cadastro de propósito: editar um produto sem falar de estoque não pode zerar o estoque dele.
+
+Na listagem existe o filtro `min_stock` (ex: `/products?min_stock=1`), que retorna só os produtos com estoque maior ou igual ao valor pedido. Ele pode ser combinado com os outros filtros, e valor inválido recebe 400.
 
 ### Observações (na ordem do desenvolvimento)
 
