@@ -14,14 +14,23 @@ class ProductService
 
     public function getAll($adminUserId, $filters = [])
     {
+        $categoryTitle = "c.title";
+        $translationJoin = "";
+        $binds = [];
+
+        if (isset($filters['lang'])) {
+            $categoryTitle = "COALESCE(ct.label, c.title)";
+            $translationJoin = " LEFT JOIN category_translation ct ON ct.category_id = c.id AND ct.lang_code = :lang";
+            $binds[':lang'] = $filters['lang'];
+        }
+
         $query = "
-            SELECT p.*, c.title as category_title
+            SELECT p.*, {$categoryTitle} as category_title
             FROM product p
             INNER JOIN product_category pc ON pc.product_id = p.id
-            INNER JOIN category c ON c.id = pc.cat_id
+            INNER JOIN category c ON c.id = pc.cat_id{$translationJoin}
             WHERE p.company_id = {$this->getCompanyFromAdminUser($adminUserId)}
         ";
-        $binds = [];
 
         if (isset($filters['active'])) {
             $query .= " AND p.active = :active";

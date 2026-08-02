@@ -46,6 +46,13 @@ class ProductController
             }
             $filters['order'] = $queryParams['order'];
         }
+        if (isset($queryParams['lang'])) {
+            if (!is_string($queryParams['lang']) || $queryParams['lang'] === '') {
+                $response->getBody()->write(json_encode(['error' => 'valor do parametro lang invalido']));
+                return $response->withStatus(400);
+            }
+            $filters['lang'] = $queryParams['lang'];
+        }
 
         $stm = $this->service->getAll($adminUserId, $filters);
 
@@ -64,13 +71,23 @@ class ProductController
         return $response->withStatus(200);
     }
 
+
     public function getOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $queryParams = $request->getQueryParams();
+        $lang = null;
+        if (isset($queryParams['lang'])) {
+            if (!is_string($queryParams['lang']) || $queryParams['lang'] === '') {
+                $response->getBody()->write(json_encode(['error' => 'valor do parametro lang invalido']));
+                return $response->withStatus(400);
+            }
+            $lang = $queryParams['lang'];
+        }
         $stm = $this->service->getOne($args['id']);
         $product = Product::hydrateByFetch($stm->fetch());
 
         $adminUserId = $request->getHeader('admin_user_id')[0];
-        $productCategories = $this->categoryService->getProductCategory($adminUserId, $product->id)->fetchAll();
+        $productCategories = $this->categoryService->getProductCategory($adminUserId, $product->id, $lang)->fetchAll();
         $categoryTitles = [];
         foreach ($productCategories as $productCategory) {
             $categoryTitles[] = $productCategory->title;
@@ -80,6 +97,7 @@ class ProductController
         $response->getBody()->write(json_encode($product));
         return $response->withStatus(200);
     }
+
 
     public function insertOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {

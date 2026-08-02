@@ -18,8 +18,16 @@ class CategoryController
     public function getAll(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $adminUserId = $request->getHeader('admin_user_id')[0];
-        
-        $stm = $this->service->getAll($adminUserId);
+        $queryParams = $request->getQueryParams();
+        $lang = null;
+        if (isset($queryParams['lang'])) {
+            if (!is_string($queryParams['lang']) || $queryParams['lang'] === '') {
+                $response->getBody()->write(json_encode(['error' => 'valor do parametro lang invalido']));
+                return $response->withStatus(400);
+            }
+            $lang = $queryParams['lang'];
+        }
+        $stm = $this->service->getAll($adminUserId, $lang);
         $response->getBody()->write(json_encode($stm->fetchAll()));
         return $response->withStatus(200);
     }
@@ -27,8 +35,16 @@ class CategoryController
     public function getOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $adminUserId = $request->getHeader('admin_user_id')[0];
-        $stm = $this->service->getOne($adminUserId, $args['id']);
-
+        $queryParams = $request->getQueryParams();
+        $lang = null;
+        if (isset($queryParams['lang'])) {
+            if (!is_string($queryParams['lang']) || $queryParams['lang'] === '') {
+                $response->getBody()->write(json_encode(['error' => 'valor do parametro lang invalido']));
+                return $response->withStatus(400);
+            }
+            $lang = $queryParams['lang'];
+        }
+        $stm = $this->service->getOne($adminUserId, $args['id'], $lang);
         $response->getBody()->write(json_encode($stm->fetchAll()));
         return $response->withStatus(200);
     }

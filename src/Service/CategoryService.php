@@ -12,52 +12,75 @@ class CategoryService
         $this->pdo = DB::connect();
     }
 
-    public function getAll($adminUserId)
+    public function getAll($adminUserId, $lang = null)
     {
+        $categoryTitle = "c.title";
+        $translationJoin = "";
+        $binds = [];
+        if ($lang !== null) {
+            $categoryTitle = "COALESCE(ct.label, c.title)";
+            $translationJoin = " LEFT JOIN category_translation ct ON ct.category_id = c.id AND ct.lang_code = :lang";
+            $binds[':lang'] = $lang;
+        }
         $query = "
-            SELECT *
-            FROM category c
+            SELECT c.id, c.company_id, {$categoryTitle} as title, c.active
+            FROM category c{$translationJoin}
             WHERE (c.company_id = {$this->getCompanyFromAdminUser($adminUserId)} OR c.company_id IS NULL)
         ";
 
         $stm = $this->pdo->prepare($query);
-
-        $stm->execute();
+        $stm->execute($binds);
 
         return $stm;
     }
 
-    public function getOne($adminUserId, $categoryId)
+
+    public function getOne($adminUserId, $categoryId, $lang = null)
     {
+        $categoryTitle = "c.title";
+        $translationJoin = "";
+        $binds = [];
+        if ($lang !== null) {
+            $categoryTitle = "COALESCE(ct.label, c.title)";
+            $translationJoin = " LEFT JOIN category_translation ct ON ct.category_id = c.id AND ct.lang_code = :lang";
+            $binds[':lang'] = $lang;
+        }
         $query = "
-            SELECT *
-            FROM category c
+            SELECT c.id, c.company_id, {$categoryTitle} as title, c.active
+            FROM category c{$translationJoin}
             WHERE c.active = 1
             AND (c.company_id = {$this->getCompanyFromAdminUser($adminUserId)} OR c.company_id IS NULL)
             AND c.id = {$categoryId}
         ";
 
         $stm = $this->pdo->prepare($query);
-
-        $stm->execute();
+        $stm->execute($binds);
 
         return $stm;
     }
 
-    public function getProductCategory($adminUserId, $productId)
+
+    public function getProductCategory($adminUserId, $productId, $lang = null)
     {
+        $categoryTitle = "c.title";
+        $translationJoin = "";
+        $binds = [];
+        if ($lang !== null) {
+            $categoryTitle = "COALESCE(ct.label, c.title)";
+            $translationJoin = " LEFT JOIN category_translation ct ON ct.category_id = c.id AND ct.lang_code = :lang";
+            $binds[':lang'] = $lang;
+        }
         $query = "
-            SELECT c.id, c.title
+            SELECT c.id, {$categoryTitle} as title
             FROM category c
-            INNER JOIN product_category pc ON pc.cat_id = c.id
+            INNER JOIN product_category pc ON pc.cat_id = c.id{$translationJoin}
             WHERE pc.product_id = {$productId}
             AND c.active = 1
             AND (c.company_id = {$this->getCompanyFromAdminUser($adminUserId)} OR c.company_id IS NULL)
         ";
 
         $stm = $this->pdo->prepare($query);
-
-        $stm->execute();
+        $stm->execute($binds);
 
         return $stm;
     }
