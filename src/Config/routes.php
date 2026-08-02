@@ -24,6 +24,7 @@ $app->group('/products', function (RouteCollectorProxy $group) {
     $group->put('/{id}', [ProductController::class, 'updateOne']);
     $group->delete('/{id}', [ProductController::class, 'deleteOne']);
     $group->post('/{id}/comments', [CommentController::class, 'insertOne']);
+    $group->get('/{id}/comments', [CommentController::class, 'getByProduct']);
 });
 
 $app->group('/comments', function (RouteCollectorProxy $group) {

@@ -144,4 +144,18 @@ class CommentService
 
         return true;
     }
+        public function getByProduct($productId)
+    {
+        $stm = $this->pdo->prepare("
+            SELECT c.id, c.admin_user_id, au.name as author, c.parent_id, c.content, c.created_at,
+                (SELECT COUNT(*) FROM comment_like cl WHERE cl.comment_id = c.id) as likes
+            FROM comment c
+            LEFT JOIN admin_user au ON au.id = c.admin_user_id
+            WHERE c.product_id = :product_id
+            ORDER BY c.created_at
+        ");
+        $stm->execute([':product_id' => $productId]);
+
+        return $stm;
+    }
 }

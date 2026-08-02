@@ -79,4 +79,26 @@ class CommentController
         }
         return $response->withStatus(404);
     }
+        public function getByProduct(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $fetchedComments = $this->service->getByProduct($args['id'])->fetchAll();
+
+        $commentsById = [];
+        foreach ($fetchedComments as $fetchedComment) {
+            $fetchedComment->replies = [];
+            $commentsById[$fetchedComment->id] = $fetchedComment;
+        }
+
+        $commentTree = [];
+        foreach ($commentsById as $comment) {
+            if ($comment->parent_id === null) {
+                $commentTree[] = $comment;
+            } elseif (isset($commentsById[$comment->parent_id])) {
+                $commentsById[$comment->parent_id]->replies[] = $comment;
+            }
+        }
+
+        $response->getBody()->write(json_encode($commentTree));
+        return $response->withStatus(200);
+    }
 }
