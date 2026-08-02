@@ -137,11 +137,11 @@ Além das informações já disponíveis do produto, desejo acrescentar também 
 Quero que os usuários do sistema possam discutir sobre os produtos em uma área de comentários.
 
 Para isso, novas rotas devem ser criadas:
-- [ ] Criar um novo comentário no produto
-- [ ] Responder um comentário já realizado (todo comentário pode ser diretamente respondido)
-- [ ] Remover um comentário feito por mim
-- [ ] Curtir um comentário
-- [ ] Listar todos os comentários de um produto em um objeto com hierarquia de comentários
+- [x] Criar um novo comentário no produto
+- [x] Responder um comentário já realizado (todo comentário pode ser diretamente respondido)
+- [x] Remover um comentário feito por mim
+- [x] Curtir um comentário
+- [x] Listar todos os comentários de um produto em um objeto com hierarquia de comentários
 
 ##
 **Seu trabalho é atender às demandas solicitadas pelo cliente.**
@@ -232,6 +232,22 @@ A atualização é feita pelo `PUT /products/{id}` normal, mandando o campo `sto
 
 Na listagem existe o filtro `min_stock` (ex: `/products?min_stock=1`), que retorna só os produtos com estoque maior ou igual ao valor pedido. Ele pode ser combinado com os outros filtros, e valor inválido recebe 400.
 
+### Comentários nos produtos
+
+Agora os produtos têm uma área de comentários. É possível comentar em um produto, responder qualquer comentário (inclusive responder uma resposta, sem limite de profundidade), curtir um comentário, apagar os próprios comentários e listar todos os comentários de um produto em uma estrutura hierárquica.
+
+As rotas novas:
+
+- `POST /products/{id}/comments` cria um comentário no produto
+- `POST /comments/{id}/replies` responde um comentário
+- `POST /comments/{id}/like` curte um comentário (cada usuário pode curtir cada comentário uma vez, a segunda tentativa recebe 400)
+- `DELETE /comments/{id}` remove um comentário (só o próprio autor pode, tentar remover comentário de outra pessoa recebe 403)
+- `GET /products/{id}/comments` lista os comentários do produto
+
+Na remoção, toda a cascata vai junto: as respostas do comentário (e as respostas delas) e as curtidas são removidas na mesma transação, para não ficar resposta perdida quebrando a estrutura.
+
+A listagem retorna a estrutura hierárquica: os comentários principais do produto, cada um com autor, contagem de curtidas e a lista de respostas aninhadas, respostas dentro de respostas.
+
 ### Observações (na ordem do desenvolvimento)
 
 1. Durante o preparo do ambiente do docker, eu notei que no `README` o comando de reverter migration era `rollback`, no `composer.json` era `rollback-migration`, optei por alterar no `composer.json` para apenas `rollback` para seguir o `README`.
@@ -245,6 +261,8 @@ Na listagem existe o filtro `min_stock` (ex: `/products?min_stock=1`), que retor
 5. Quando cheguei nas migrations e tive que usar o Phinx, foi meu primeiro contato com a biblioteca. Fiz algumas pesquisas sobre o assunto para entender melhor sua função e o porquê de se usar migrations. Meu primeiro teste deu bem errado: tentei criar o arquivo na pasta errada, o nome da classe não batia com o padrão que o Phinx espera e a pasta de destino estava sem permissão. Depois de entender o fluxo certo (criar pelo `composer create-migration` via docker, que gera o arquivo no lugar e com o nome padronizado), a migration saiu reversível e validada nos dois sentidos.
 
 6. Atualizei a coleção do Postman com as novas funções: adicionei a insertTranslations (que também facilita testar a estrutura do lang), documentei os parâmetros de busca nas requests e tirei uma série de "/" no final das URLs que causavam erro 404.
+
+7. Na remoção de comentários eu pensei primeiro em fazer no estilo do Reddit: o comentário apagado continuaria na conversa como "comentario removido", preservando as respostas das outras pessoas e mantendo o dado no banco. Mas pensando na proposta do projeto, que é uma loja, não faz sentido manter esse histórico de discussão. Decidi que apagar remove de verdade, levando junto toda a cascata de respostas e curtidas.
 
 ### Ambiente Docker
 - Subir a aplicação: `docker compose up -d` (porta 8000)
