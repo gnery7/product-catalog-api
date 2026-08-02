@@ -40,6 +40,12 @@ class ProductService
             $query .= " AND p.id IN (SELECT product_id FROM product_category WHERE cat_id = :category)";
             $binds[':category'] = $filters['category'];
         }
+
+        if (isset($filters['min_stock'])) {
+            $query .= " AND p.stock >= :min_stock";
+            $binds[':min_stock'] = $filters['min_stock'];
+        }
+
         if (isset($filters['order'])) {
             $query .= " ORDER BY p.created_at " . strtoupper($filters['order']);
         }
@@ -64,17 +70,21 @@ class ProductService
 
     public function insertOne($body, $adminUserId)
     {
+        $stock = (int)($body['stock'] ?? 0);
+
         $stm = $this->pdo->prepare("
             INSERT INTO product (
                 company_id,
                 title,
                 price,
-                active
+                active,
+                stock
             ) VALUES (
                 {$body['company_id']},
                 '{$body['title']}',
                 {$body['price']},
-                {$body['active']}
+                {$body['active']},
+                {$stock}
             )
         ");
         if (!$stm->execute())
@@ -109,14 +119,20 @@ class ProductService
         return $stm->execute();
     }
 
+
     public function updateOne($id, $body, $adminUserId)
     {
+        $stockUpdate = "";
+        if (isset($body['stock'])) {
+            $stockUpdate = ", stock = " . (int)$body['stock'];
+        }
+
         $stm = $this->pdo->prepare("
             UPDATE product
             SET company_id = {$body['company_id']},
                 title = '{$body['title']}',
                 price = {$body['price']},
-                active = {$body['active']}
+                active = {$body['active']}{$stockUpdate}
             WHERE id = {$id}
         ");
         if (!$stm->execute())
@@ -144,6 +160,7 @@ class ProductService
 
         return $stm->execute();
     }
+
 
     public function deleteOne($id, $adminUserId)
     {

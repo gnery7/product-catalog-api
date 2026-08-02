@@ -54,6 +54,14 @@ class ProductController
             $filters['lang'] = $queryParams['lang'];
         }
 
+        if (isset($queryParams['min_stock'])) {
+            if (!ctype_digit($queryParams['min_stock'])) {
+                $response->getBody()->write(json_encode(['error' => 'valor do parametro min_stock invalido']));
+                return $response->withStatus(400);
+            }
+            $filters['min_stock'] = $queryParams['min_stock'];
+        }
+
         $stm = $this->service->getAll($adminUserId, $filters);
 
         $fetchedProducts = $stm->fetchAll();
@@ -104,6 +112,11 @@ class ProductController
         $body = $request->getParsedBody();
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
+        if (isset($body['stock']) && !ctype_digit((string)$body['stock'])) {
+            $response->getBody()->write(json_encode(['error' => 'valor do campo stock invalido']));
+            return $response->withStatus(400);
+        }
+
         if ($this->service->insertOne($body, $adminUserId)) {
             return $response->withStatus(200);
         } else {
@@ -111,10 +124,15 @@ class ProductController
         }
     }
 
+
     public function updateOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $body = $request->getParsedBody();
         $adminUserId = $request->getHeader('admin_user_id')[0];
+        if (isset($body['stock']) && !ctype_digit((string)$body['stock'])) {
+            $response->getBody()->write(json_encode(['error' => 'valor do campo stock invalido']));
+            return $response->withStatus(400);
+        }
 
         if ($this->service->updateOne($args['id'], $body, $adminUserId)) {
             return $response->withStatus(200);
