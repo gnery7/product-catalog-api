@@ -167,7 +167,7 @@ Para efetuar a criação do ambiente docker, partimos de algumas premissas:
 - [ ] Substituir o banco serverless **SQLite** por um banco como **MySQL**/**PostgreSQL**/outro e servir por container;
 - [x] Escrever **novos testes unitários** para funcionalidades faltantes;
 - [x] Implementar um **Linter** e disponibilizar por docker (especificar comando);
-- [ ] Implementar **análise estática** e disponibilizar por docker (especificar comando);
+- [x] Implementar **análise estática** e disponibilizar por docker (especificar comando);
 - [ ] Escrever um script "_`check_deploy.sh`_" que faz todas as validações implementadas como uma pipeline e determina se o código está pronto para produção.
 
 ## Suas Respostas, Dúvidas e Observações
@@ -259,6 +259,14 @@ Para viabilizar isso, os services passaram a aceitar a conexão do banco por par
 Instalei o PHP_CodeSniffer (`squizlabs/php_codesniffer`), configurado com o padrão PSR-12, o guia de estilo oficial da comunidade de PHP. Para verificar o código: `docker compose run --rm app composer lint`. Para corrigir automaticamente o que for possível: `docker compose run --rm app composer lint-fix`.
 
 O lint encontrou indentação incorreta (8 espaços em vez de 4, em métodos que fui adicionando ao longo do projeto), estruturas de controle sem chaves e espaços em branco sobrando. A maior parte foi corrigida automaticamente pelo `lint-fix`. O que sobrou foram avisos de linha longa (mais de 120 caracteres) na assinatura de vários métodos dos controllers, um formato que se repete no projeto inteiro. Em vez de quebrar só as linhas que passavam do limite, quebrei a assinatura de todos os métodos dos controllers no mesmo formato (um parâmetro por linha), para manter consistência em vez de corrigir só os casos que por acaso tinham nome de método mais longo. Depois disso o lint não aponta mais nenhum erro nem aviso.
+
+### Análise estática (PHPStan)
+
+O PHPStan analisa o código sem executar ele, procurando erros de lógica e de tipo: método que não existe, tipo incompatível entre o que é esperado e o que é passado, valor que pode vir null sem tratamento. É diferente do linter, que só olha estilo. Instalei pensando em garantir que o projeto não quebre no futuro por incompatibilidade de tipos, caso alguma biblioteca ou o próprio PHP mude. Para rodar: `docker compose run --rm app composer stan`.
+
+Comecei testando no nível 0 (o mais permissivo), que passou sem nenhum apontamento. Fui subindo até o nível 5 e parei ali, porque pelo escopo do projeto não vi motivo para ir além disso.
+
+No nível 5 apareceu um erro no `JsonResponseMiddleware` declarava que devolvia a implementação concreta de resposta do Slim, mas o método que ele chama só garante devolver a interface genérica de resposta. Corrigi para o middleware falar com a interface em vez da implementação específica, seguindo o PSR-15 e garantindo que a implementação de resposta pode ser trocada no futuro sem quebrar esse código.
 
 ### Observações (na ordem do desenvolvimento)
 
