@@ -168,7 +168,7 @@ Para efetuar a criação do ambiente docker, partimos de algumas premissas:
 - [x] Escrever **novos testes unitários** para funcionalidades faltantes;
 - [x] Implementar um **Linter** e disponibilizar por docker (especificar comando);
 - [x] Implementar **análise estática** e disponibilizar por docker (especificar comando);
-- [ ] Escrever um script "_`check_deploy.sh`_" que faz todas as validações implementadas como uma pipeline e determina se o código está pronto para produção.
+- [x] Escrever um script "_`check_deploy.sh`_" que faz todas as validações implementadas como uma pipeline e determina se o código está pronto para produção.
 
 ## Suas Respostas, Dúvidas e Observações
 
@@ -267,6 +267,14 @@ O PHPStan analisa o código sem executar ele, procurando erros de lógica e de t
 Comecei testando no nível 0 (o mais permissivo), que passou sem nenhum apontamento. Fui subindo até o nível 5 e parei ali, porque pelo escopo do projeto não vi motivo para ir além disso.
 
 No nível 5 apareceu um erro no `JsonResponseMiddleware` declarava que devolvia a implementação concreta de resposta do Slim, mas o método que ele chama só garante devolver a interface genérica de resposta. Corrigi para o middleware falar com a interface em vez da implementação específica, seguindo o PSR-15 e garantindo que a implementação de resposta pode ser trocada no futuro sem quebrar esse código.
+
+### check_deploy.sh
+
+Criei o script `check_deploy.sh` na raiz do projeto, que roda as três validações em sequência: primeiro o lint (PSR-12), depois o PHPStan (tipos e lógica) e por último os testes automatizados. Se qualquer um dos três passos falhar, o script para imediatamente (usando `set -e`) e não chega na mensagem final de sucesso, então ele só diz que está pronto para produção se tudo realmente passou.
+
+Para rodar: `sh check_deploy.sh`. No Windows o script precisa ser executado por um terminal que entenda shell script, como o Git Bash, já que o PowerShell e o cmd não têm suporte nativo a `.sh` e o comando `docker` não existe dentro do container onde os testes rodam.
+
+Testei os dois cenários antes de considerar pronto: com tudo passando, e forçando uma falha de propósito para confirmar que o `set -e` realmente interrompe a execução no meio, sem deixar a mensagem de sucesso aparecer indevidamente.
 
 ### Observações (na ordem do desenvolvimento)
 
