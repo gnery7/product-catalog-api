@@ -272,6 +272,9 @@ Para viabilizar isso, os services passaram a aceitar a conexão do banco por par
 
 8. Nesse desafio dos testes automatizados eu entendi melhor como o PHPUnit testa código que depende de banco de dados, usando um banco SQLite em memória. No meio do caminho tive um problema em que o banco de teste retornava um array em vez de um objeto, porque faltava configurar o mesmo modo de busca que o `DB.php` do projeto usa. Corrigindo isso, consegui concluir a cobertura dos testes.
 
+9. Instalando o linter, o composer avisou sobre 5 vulnerabilidades de segurança conhecidas nas dependências do projeto (slim/slim, symfony/yaml e phpunit/phpunit). Rodei `composer audit` para ver os detalhes e corrigi o que deu: atualizei o slim/slim e o symfony/yaml dentro da faixa de versão que o `composer.json` já permitia, e mudei a versão fixa do phpunit de 9.5 para a faixa ^9.6, que já inclui a correção. Depois disso o `composer audit` não encontrou mais nenhuma vulnerabilidade, e a suíte de testes e a API continuaram funcionando normalmente.
+
+
 ### Ambiente Docker
 - Subir a aplicação: `docker compose up -d` (porta 8000)
 - Instalar dependências: `docker compose run --rm app composer install`
