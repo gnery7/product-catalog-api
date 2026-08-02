@@ -34,12 +34,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}{{report}}/",
+							"raw": "{{base_url}}{{report}}",
 							"host": [
 								"{{base_url}}{{report}}"
-							],
-							"path": [
-								""
 							]
 						}
 					},
@@ -75,12 +72,35 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}{{products}}/",
+							"raw": "{{base_url}}{{products}}",
 							"host": [
 								"{{base_url}}{{products}}"
 							],
-							"path": [
-								""
+							"query": [
+								{
+									"key": "active",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "6",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "desc",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "lang",
+									"value": "pt",
+									"type": "text",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -160,12 +180,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}{{products}}/",
+							"raw": "{{base_url}}{{products}}",
 							"host": [
 								"{{base_url}}{{products}}"
-							],
-							"path": [
-								""
 							]
 						}
 					},
@@ -286,12 +303,17 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}{{categories}}/",
+							"raw": "{{base_url}}{{categories}}",
 							"host": [
 								"{{base_url}}{{categories}}"
 							],
-							"path": [
-								""
+							"query": [
+							{
+								"key": "lang",
+								"value": "pt",
+								"type": "text",
+								"disabled": true
+							}
 							]
 						}
 					},
@@ -328,6 +350,14 @@
 							],
 							"path": [
 								"4"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "pt",
+									"type": "text",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -371,12 +401,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}{{categories}}/",
+							"raw": "{{base_url}}{{categories}}",
 							"host": [
 								"{{base_url}}{{categories}}"
-							],
-							"path": [
-								""
 							]
 						}
 					},
@@ -466,7 +493,45 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "insertTranslations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "admin_user_id",
+								"value": "1",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"translations\": [\n        {\n            \"lang_code\": \"en\",\n            \"label\": \"clothes\"\n        },\n        {\n            \"lang_code\": \"pt\",\n            \"label\": \"roupas\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}{{categories}}/1",
+							"host": [
+								"{{base_url}}{{categories}}"
+							],
+							"path": [
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
+
 			]
 		}
 	],
