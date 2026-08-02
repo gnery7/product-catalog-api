@@ -1,573 +1,731 @@
 {
-	"info": {
-		"_postman_id": "9821000f-63e9-4afb-bdb6-a9cc1c230183",
-		"name": "Teste Backend",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "14729547"
-	},
-	"item": [
-		{
-			"name": "report",
-			"item": [
-				{
-					"name": "generate",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}{{report}}",
-							"host": [
-								"{{base_url}}{{report}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "products",
-			"item": [
-				{
-					"name": "getAll",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}{{products}}",
-							"host": [
-								"{{base_url}}{{products}}"
-							],
-							"query": [
-								{
-									"key": "active",
-									"value": "1",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "category",
-									"value": "6",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "order",
-									"value": "desc",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "lang",
-									"value": "pt",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "min_stock",
-									"value": "1",
-									"type": "text",
-									"disabled": true
-								}
-
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "getOne",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}{{products}}/10",
-							"host": [
-								"{{base_url}}{{products}}"
-							],
-							"path": [
-								"10"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "insertOne",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"company_id\": 1,\n\t\"title\": \"nome do produto\",\n\t\"price\": 123.4,\n\t\"active\": true,\n\t\"category_id\": 1,\n\t\"stock\": 25\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}{{products}}",
-							"host": [
-								"{{base_url}}{{products}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "updateOne",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"company_id\": 1,\n\t\"title\": \"nome do produto\",\n\t\"price\": 123.4,\n\t\"active\": true,\n\t\"category_id\": 1,\n\t\"stock\": 40\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}{{products}}/19",
-							"host": [
-								"{{base_url}}{{products}}"
-							],
-							"path": [
-								"19"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "deleteOne",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}{{products}}/19",
-							"host": [
-								"{{base_url}}{{products}}"
-							],
-							"path": [
-								"19"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "categories",
-			"item": [
-				{
-					"name": "getAll",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}{{categories}}",
-							"host": [
-								"{{base_url}}{{categories}}"
-							],
-							"query": [
-							{
-								"key": "lang",
-								"value": "pt",
-								"type": "text",
-								"disabled": true
-							},
-							{
-								"key": "min_stock",
-								"value": "1",
-								"type": "text",
-								"disabled": true
-							}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "getOne",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}{{categories}}/4",
-							"host": [
-								"{{base_url}}{{categories}}"
-							],
-							"path": [
-								"4"
-							],
-							"query": [
-								{
-									"key": "lang",
-									"value": "pt",
-									"type": "text",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "insertOne",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"title\": \"nome da categoria\",\n\t\"active\": true\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}{{categories}}",
-							"host": [
-								"{{base_url}}{{categories}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "updateOne",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"title\": \"nome da categoria\",\n\t\"active\": true\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}{{categories}}/7",
-							"host": [
-								"{{base_url}}{{categories}}"
-							],
-							"path": [
-								"7"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "deleteOne",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "admin_user_id",
-								"value": "1"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}{{categories}}/7",
-							"host": [
-								"{{base_url}}{{categories}}"
-							],
-							"path": [
-								"7"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "insertTranslations",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "admin_user_id",
-								"value": "1",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"translations\": [\n        {\n            \"lang_code\": \"en\",\n            \"label\": \"clothes\"\n        },\n        {\n            \"lang_code\": \"pt\",\n            \"label\": \"roupas\"\n        }\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}{{categories}}/1",
-							"host": [
-								"{{base_url}}{{categories}}"
-							],
-							"path": [
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-
-			]
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "localhost:8000"
-		},
-		{
-			"key": "companies",
-			"value": "/companies"
-		},
-		{
-			"key": "products",
-			"value": "/products"
-		},
-		{
-			"key": "categories",
-			"value": "/categories"
-		},
-		{
-			"key": "report",
-			"value": "/report"
-		}
-	]
+  "info": {
+    "_postman_id": "2f42d41b-3f8d-4927-9b3c-7f1d1a6075af",
+    "name": "Teste Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "57045063",
+    "_collection_link": "https://go.postman.co/collection/57045063-2f42d41b-3f8d-4927-9b3c-7f1d1a6075af?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "report",
+      "item": [
+        {
+          "name": "generate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{report}}",
+              "host": [
+                "{{base_url}}{{report}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "products",
+      "item": [
+        {
+          "name": "getAll",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{products}}",
+              "host": [
+                "{{base_url}}{{products}}"
+              ],
+              "query": [
+                {
+                  "key": "active",
+                  "value": "1",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "category",
+                  "value": "6",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "order",
+                  "value": "desc",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "pt",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "min_stock",
+                  "value": "1",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getOne",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{products}}/10",
+              "host": [
+                "{{base_url}}{{products}}"
+              ],
+              "path": [
+                "10"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "insertOne",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"company_id\": 1,\n\t\"title\": \"nome do produto\",\n\t\"price\": 123.4,\n\t\"active\": true,\n\t\"category_id\": 1,\n\t\"stock\": 25\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{products}}",
+              "host": [
+                "{{base_url}}{{products}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateOne",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"company_id\": 1,\n\t\"title\": \"nome do produto\",\n\t\"price\": 123.4,\n\t\"active\": true,\n\t\"category_id\": 1,\n\t\"stock\": 40\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{products}}/19",
+              "host": [
+                "{{base_url}}{{products}}"
+              ],
+              "path": [
+                "19"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteOne",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{products}}/19",
+              "host": [
+                "{{base_url}}{{products}}"
+              ],
+              "path": [
+                "19"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "categories",
+      "item": [
+        {
+          "name": "getAll",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{categories}}",
+              "host": [
+                "{{base_url}}{{categories}}"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "pt",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "min_stock",
+                  "value": "1",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getOne",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{categories}}/4",
+              "host": [
+                "{{base_url}}{{categories}}"
+              ],
+              "path": [
+                "4"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "pt",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "insertOne",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"title\": \"nome da categoria\",\n\t\"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{categories}}",
+              "host": [
+                "{{base_url}}{{categories}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateOne",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"title\": \"nome da categoria\",\n\t\"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{categories}}/7",
+              "host": [
+                "{{base_url}}{{categories}}"
+              ],
+              "path": [
+                "7"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteOne",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": []
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{categories}}/7",
+              "host": [
+                "{{base_url}}{{categories}}"
+              ],
+              "path": [
+                "7"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "insertTranslations",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"translations\": [\n        {\n            \"lang_code\": \"en\",\n            \"label\": \"clothes\"\n        },\n        {\n            \"lang_code\": \"pt\",\n            \"label\": \"roupas\"\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{categories}}/1",
+              "host": [
+                "{{base_url}}{{categories}}"
+              ],
+              "path": [
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "comments",
+      "item": [
+        {
+          "name": "deleteOne",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/comments/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "comments",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "insertReply",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"content\": \"respondendo o comentario\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/comments/1/replies",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "comments",
+                "1",
+                "replies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "insertLike",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/comments/1/like",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "comments",
+                "1",
+                "like"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "insertOne",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"content\": \"comentario no produto\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{products}}/1/comments",
+              "host": [
+                "{{base_url}}{{products}}"
+              ],
+              "path": [
+                "1",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByProduct",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "admin_user_id",
+                "value": "1",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{products}}/1/comments",
+              "host": [
+                "{{base_url}}{{products}}"
+              ],
+              "path": [
+                "1",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "localhost:8000"
+    },
+    {
+      "key": "companies",
+      "value": "/companies"
+    },
+    {
+      "key": "products",
+      "value": "/products"
+    },
+    {
+      "key": "categories",
+      "value": "/categories"
+    },
+    {
+      "key": "report",
+      "value": "/report"
+    }
+  ]
 }
