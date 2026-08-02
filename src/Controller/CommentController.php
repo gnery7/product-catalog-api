@@ -48,4 +48,20 @@ class CommentController
             return $response->withStatus(404);
         }
     }
+
+    public function insertLike(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $adminUserId = $request->getHeader('admin_user_id')[0];
+
+        $result = $this->service->insertLike($args['id'], $adminUserId);
+
+        if ($result === true) {
+            return $response->withStatus(200);
+        }
+        if ($result === 'duplicado') {
+            $response->getBody()->write(json_encode(['error' => 'comentario ja curtido por este usuario']));
+            return $response->withStatus(400);
+        }
+        return $response->withStatus(404);
+    }
 }

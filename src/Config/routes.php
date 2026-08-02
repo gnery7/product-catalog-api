@@ -28,6 +28,7 @@ $app->group('/products', function (RouteCollectorProxy $group) {
 
 $app->group('/comments', function (RouteCollectorProxy $group) {
     $group->post('/{id}/replies', [CommentController::class, 'insertReply']);
+    $group->post('/{id}/like', [CommentController::class, 'insertLike']);
 });
 
 

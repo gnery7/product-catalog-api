@@ -67,4 +67,38 @@ class CommentService
             ':content' => $content,
         ]);
     }
+
+        public function insertLike($commentId, $adminUserId)
+    {
+        $stm = $this->pdo->prepare("
+            SELECT id
+            FROM comment
+            WHERE id = :id
+        ");
+        $stm->execute([':id' => $commentId]);
+        if ($stm->fetch() === false) {
+            return false;
+        }
+
+        $stm = $this->pdo->prepare("
+            INSERT INTO comment_like (
+                comment_id,
+                admin_user_id
+            ) VALUES (
+                :comment_id,
+                :admin_user_id
+            )
+        ");
+
+        try {
+            $stm->execute([
+                ':comment_id' => $commentId,
+                ':admin_user_id' => $adminUserId,
+            ]);
+        } catch (\PDOException $e) {
+            return 'duplicado';
+        }
+
+        return true;
+    }
 }
