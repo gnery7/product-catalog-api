@@ -7,9 +7,9 @@ use Contatoseguro\TesteBackend\Config\DB;
 class CompanyService
 {
     private \PDO $pdo;
-    public function __construct()
+    public function __construct(?\PDO $pdo = null)
     {
-        $this->pdo = DB::connect();
+        $this->pdo = $pdo ?? DB::connect();
     }
 
     public function getNameById($id)
