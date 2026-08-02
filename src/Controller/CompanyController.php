@@ -9,13 +9,17 @@ use Psr\Http\Message\ServerRequestInterface;
 class CompanyController
 {
     private \PDO $pdo;
-    public function __construct(
-    ) {
+
+    public function __construct()
+    {
         $this->pdo = DB::connect();
     }
 
-    public function getAll(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function getAll(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $stm = $this->pdo->prepare('SELECT * FROM company');
         $stm->execute();
 
@@ -23,8 +27,11 @@ class CompanyController
         return $response->withStatus(200);
     }
 
-    public function getOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function getOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $stm = $this->pdo->prepare("SELECT * FROM company WHERE id = {$args['id']}");
         $stm->execute();
 

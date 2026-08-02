@@ -33,7 +33,7 @@ class CommentService
         ]);
     }
 
-        public function insertReply($parentId, $adminUserId, $content)
+    public function insertReply($parentId, $adminUserId, $content)
     {
         $stm = $this->pdo->prepare("
             SELECT product_id
@@ -61,14 +61,14 @@ class CommentService
         ");
 
         return $stm->execute([
-            ':product_id' => $parentComment->product_id,
-            ':admin_user_id' => $adminUserId,
-            ':parent_id' => $parentId,
-            ':content' => $content,
+        ':product_id' => $parentComment->product_id,
+        ':admin_user_id' => $adminUserId,
+        ':parent_id' => $parentId,
+        ':content' => $content,
         ]);
     }
 
-        public function insertLike($commentId, $adminUserId)
+    public function insertLike($commentId, $adminUserId)
     {
         $stm = $this->pdo->prepare("
             SELECT id
@@ -102,7 +102,7 @@ class CommentService
         return true;
     }
 
-        public function deleteOne($commentId, $adminUserId)
+    public function deleteOne($commentId, $adminUserId)
     {
         $stm = $this->pdo->prepare("
             SELECT admin_user_id
@@ -144,7 +144,7 @@ class CommentService
 
         return true;
     }
-        public function getByProduct($productId)
+    public function getByProduct($productId)
     {
         $stm = $this->pdo->prepare("
             SELECT c.id, c.admin_user_id, au.name as author, c.parent_id, c.content, c.created_at,

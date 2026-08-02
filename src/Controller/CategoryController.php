@@ -15,8 +15,11 @@ class CategoryController
         $this->service = new CategoryService();
     }
 
-    public function getAll(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function getAll(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $adminUserId = $request->getHeader('admin_user_id')[0];
         $queryParams = $request->getQueryParams();
         $lang = null;
@@ -32,8 +35,11 @@ class CategoryController
         return $response->withStatus(200);
     }
 
-    public function getOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function getOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $adminUserId = $request->getHeader('admin_user_id')[0];
         $queryParams = $request->getQueryParams();
         $lang = null;
@@ -49,8 +55,11 @@ class CategoryController
         return $response->withStatus(200);
     }
 
-    public function insertOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function insertOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $body = $request->getParsedBody();
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
@@ -61,8 +70,11 @@ class CategoryController
         }
     }
 
-    public function insertTranslations(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function insertTranslations(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $body = $request->getParsedBody();
 
         if (!isset($body['translations']) || !is_array($body['translations']) || $body['translations'] === []) {
@@ -84,8 +96,11 @@ class CategoryController
         }
     }
 
-    public function updateOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function updateOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $body = $request->getParsedBody();
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
@@ -96,8 +111,11 @@ class CategoryController
         }
     }
 
-    public function deleteOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function deleteOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
         if ($this->service->deleteOne($args['id'], $adminUserId)) {

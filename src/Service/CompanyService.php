@@ -16,7 +16,7 @@ class CompanyService
     {
         $stm = $this->pdo->prepare("SELECT name FROM company WHERE id = {$id}");
         $stm->execute();
-        
+
         return $stm;
     }
 }

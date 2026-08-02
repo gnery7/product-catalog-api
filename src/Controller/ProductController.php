@@ -19,8 +19,11 @@ class ProductController
         $this->categoryService = new CategoryService();
     }
 
-    public function getAll(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function getAll(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $adminUserId = $request->getHeader('admin_user_id')[0];
         $queryParams = $request->getQueryParams();
 
@@ -79,9 +82,11 @@ class ProductController
         return $response->withStatus(200);
     }
 
-
-    public function getOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function getOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $queryParams = $request->getQueryParams();
         $lang = null;
         if (isset($queryParams['lang'])) {
@@ -106,9 +111,11 @@ class ProductController
         return $response->withStatus(200);
     }
 
-
-    public function insertOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function insertOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $body = $request->getParsedBody();
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
@@ -124,9 +131,11 @@ class ProductController
         }
     }
 
-
-    public function updateOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function updateOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $body = $request->getParsedBody();
         $adminUserId = $request->getHeader('admin_user_id')[0];
         if (isset($body['stock']) && !ctype_digit((string)$body['stock'])) {
@@ -141,8 +150,11 @@ class ProductController
         }
     }
 
-    public function deleteOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function deleteOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
         if ($this->service->deleteOne($args['id'], $adminUserId)) {

@@ -88,8 +88,9 @@ class ProductService
                 {$stock}
             )
         ");
-        if (!$stm->execute())
+        if (!$stm->execute()) {
             return false;
+        }
 
         $productId = $this->pdo->lastInsertId();
 
@@ -102,8 +103,9 @@ class ProductService
                 {$body['category_id']}
             );
         ");
-        if (!$stm->execute())
+        if (!$stm->execute()) {
             return false;
+        }
 
         $stm = $this->pdo->prepare("
             INSERT INTO product_log (
@@ -136,16 +138,18 @@ class ProductService
                 active = {$body['active']}{$stockUpdate}
             WHERE id = {$id}
         ");
-        if (!$stm->execute())
+        if (!$stm->execute()) {
             return false;
+        }
 
         $stm = $this->pdo->prepare("
             UPDATE product_category
             SET cat_id = {$body['category_id']}
             WHERE product_id = {$id}
         ");
-        if (!$stm->execute())
+        if (!$stm->execute()) {
             return false;
+        }
 
         $stm = $this->pdo->prepare("
             INSERT INTO product_log (
@@ -168,12 +172,14 @@ class ProductService
         $stm = $this->pdo->prepare("
             DELETE FROM product_category WHERE product_id = {$id}
         ");
-        if (!$stm->execute())
+        if (!$stm->execute()) {
             return false;
-        
+        }
+
         $stm = $this->pdo->prepare("DELETE FROM product WHERE id = {$id}");
-        if (!$stm->execute())
+        if (!$stm->execute()) {
             return false;
+        }
 
         $stm = $this->pdo->prepare("
             INSERT INTO product_log (

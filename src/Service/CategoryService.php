@@ -101,7 +101,7 @@ class CategoryService
 
         return $stm->execute();
     }
-        public function insertTranslations($categoryId, $translations)
+    public function insertTranslations($categoryId, $translations)
     {
         $this->pdo->beginTransaction();
         $stm = $this->pdo->prepare("
@@ -167,7 +167,7 @@ class CategoryService
         ";
 
         $stm = $this->pdo->prepare($query);
-        
+
         $stm->execute();
 
         return $stm->fetch()->company_id;

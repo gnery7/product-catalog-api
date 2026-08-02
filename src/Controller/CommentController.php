@@ -15,8 +15,11 @@ class CommentController
         $this->service = new CommentService();
     }
 
-    public function insertOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function insertOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $body = $request->getParsedBody();
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
@@ -32,8 +35,11 @@ class CommentController
         }
     }
 
-    public function insertReply(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function insertReply(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $body = $request->getParsedBody();
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
@@ -49,8 +55,11 @@ class CommentController
         }
     }
 
-    public function insertLike(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function insertLike(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
         $result = $this->service->insertLike($args['id'], $adminUserId);
@@ -64,8 +73,12 @@ class CommentController
         }
         return $response->withStatus(404);
     }
-        public function deleteOne(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+
+    public function deleteOne(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
         $result = $this->service->deleteOne($args['id'], $adminUserId);
@@ -79,8 +92,12 @@ class CommentController
         }
         return $response->withStatus(404);
     }
-        public function getByProduct(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+
+    public function getByProduct(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $fetchedComments = $this->service->getByProduct($args['id'])->fetchAll();
 
         $commentsById = [];

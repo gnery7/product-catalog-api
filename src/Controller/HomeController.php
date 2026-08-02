@@ -2,7 +2,6 @@
 
 namespace Contatoseguro\TesteBackend\Controller;
 
-
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -12,8 +11,11 @@ class HomeController
     {
     }
 
-    public function home(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function home(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $response->getBody()->write('Hello World');
         return $response->withStatus(200);
     }

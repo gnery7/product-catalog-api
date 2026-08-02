@@ -4,7 +4,6 @@ namespace Contatoseguro\TesteBackend\Model;
 
 class Product
 {
-
     public $categories;
 
     public function __construct(

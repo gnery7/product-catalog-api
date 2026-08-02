@@ -17,7 +17,8 @@
         "rollback": "./vendor/bin/phinx rollback",
 
         "test": ["phpunit --testsuite unit --testdox"],
-        "lint": "./vendor/bin/phpcs --standard=PSR12 src"
+        "lint": "./vendor/bin/phpcs --standard=PSR12 src",
+        "lint-fix": "./vendor/bin/phpcbf --standard=PSR12 src"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6",

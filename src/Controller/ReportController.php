@@ -11,15 +11,18 @@ class ReportController
 {
     private ProductService $productService;
     private CompanyService $companyService;
-    
+
     public function __construct()
     {
         $this->productService = new ProductService();
         $this->companyService = new CompanyService();
     }
-    
-    public function generate(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+
+    public function generate(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
         $actionLabels = [
