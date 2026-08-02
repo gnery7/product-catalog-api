@@ -166,7 +166,7 @@ Para efetuar a criação do ambiente docker, partimos de algumas premissas:
 ### Desafios
 - [ ] Substituir o banco serverless **SQLite** por um banco como **MySQL**/**PostgreSQL**/outro e servir por container;
 - [x] Escrever **novos testes unitários** para funcionalidades faltantes;
-- [ ] Implementar um **Linter** e disponibilizar por docker (especificar comando);
+- [x] Implementar um **Linter** e disponibilizar por docker (especificar comando);
 - [ ] Implementar **análise estática** e disponibilizar por docker (especificar comando);
 - [ ] Escrever um script "_`check_deploy.sh`_" que faz todas as validações implementadas como uma pipeline e determina se o código está pronto para produção.
 
@@ -254,6 +254,12 @@ Escrevi testes automatizados novos cobrindo a atomicidade do cadastro de traduç
 
 Para viabilizar isso, os services passaram a aceitar a conexão do banco por parâmetro no construtor, além de continuarem buscando a conexão padrão sozinhos quando nenhuma é informada.
 
+### Linter (PSR-12)
+
+Instalei o PHP_CodeSniffer (`squizlabs/php_codesniffer`), configurado com o padrão PSR-12, o guia de estilo oficial da comunidade de PHP. Para verificar o código: `docker compose run --rm app composer lint`. Para corrigir automaticamente o que for possível: `docker compose run --rm app composer lint-fix`.
+
+O lint encontrou indentação incorreta (8 espaços em vez de 4, em métodos que fui adicionando ao longo do projeto), estruturas de controle sem chaves e espaços em branco sobrando. A maior parte foi corrigida automaticamente pelo `lint-fix`. O que sobrou foram avisos de linha longa (mais de 120 caracteres) na assinatura de vários métodos dos controllers, um formato que se repete no projeto inteiro. Em vez de quebrar só as linhas que passavam do limite, quebrei a assinatura de todos os métodos dos controllers no mesmo formato (um parâmetro por linha), para manter consistência em vez de corrigir só os casos que por acaso tinham nome de método mais longo. Depois disso o lint não aponta mais nenhum erro nem aviso.
+
 ### Observações (na ordem do desenvolvimento)
 
 1. Durante o preparo do ambiente do docker, eu notei que no `README` o comando de reverter migration era `rollback`, no `composer.json` era `rollback-migration`, optei por alterar no `composer.json` para apenas `rollback` para seguir o `README`.
@@ -274,6 +280,7 @@ Para viabilizar isso, os services passaram a aceitar a conexão do banco por par
 
 9. Instalando o linter, o composer avisou sobre 5 vulnerabilidades de segurança conhecidas nas dependências do projeto (slim/slim, symfony/yaml e phpunit/phpunit). Rodei `composer audit` para ver os detalhes e corrigi o que deu: atualizei o slim/slim e o symfony/yaml dentro da faixa de versão que o `composer.json` já permitia, e mudei a versão fixa do phpunit de 9.5 para a faixa ^9.6, que já inclui a correção. Depois disso o `composer audit` não encontrou mais nenhuma vulnerabilidade, e a suíte de testes e a API continuaram funcionando normalmente.
 
+10. Reparando nos avisos do linter, percebi que boa parte da indentação inconsistente que fui corrigindo ao longo do projeto provavelmente vinha do Prettier, que eu tinha rodando no editor. Por padrão o Prettier não segue o PSR-12, ele tem as próprias regras de formatação, então formatava o código de um jeito e o PSR-12 esperava outro. Descobri depois que instalando uma extensão de PHP específica o Prettier também conseguiria seguir o PSR-12, mas optei pelo PHP_CodeSniffer mesmo assim, para garantir que a verificação funcionasse igual para qualquer pessoa que clonasse o projeto, e não só na minha configuração pessoal do editor. Documentei o comando para rodar por Docker, já que o Prettier é apenas uma extensão do meu editor e não faz parte do repositório.
 
 ### Ambiente Docker
 - Subir a aplicação: `docker compose up -d` (porta 8000)
