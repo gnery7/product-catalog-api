@@ -164,7 +164,7 @@ Para efetuar a criação do ambiente docker, partimos de algumas premissas:
 - [x] Possibilitar que os **_testes unitários_ sejam executados por docker** (especificar comando).
 
 ### Desafios
-- [ ] Substituir o banco serverless **SQLite** por um banco como **MySQL**/**PostgreSQL**/outro e servir por container;
+- [x] Substituir o banco serverless **SQLite** por um banco como **MySQL**/**PostgreSQL**/outro e servir por container;
 - [x] Escrever **novos testes unitários** para funcionalidades faltantes;
 - [x] Implementar um **Linter** e disponibilizar por docker (especificar comando);
 - [x] Implementar **análise estática** e disponibilizar por docker (especificar comando);
@@ -276,6 +276,18 @@ Para rodar: `sh check_deploy.sh`. No Windows o script precisa ser executado por 
 
 Testei os dois cenários antes de considerar pronto: com tudo passando, e forçando uma falha de propósito para confirmar que o `set -e` realmente interrompe a execução no meio, sem deixar a mensagem de sucesso aparecer indevidamente.
 
+### Migrando o banco de SQLite para MySQL
+
+Substituí o SQLite pelo MySQL, servido em container, um dos desafios opcionais do teste. Optei pelo MySQL por ter mais familiaridade com ele e considerar mais versátil. Foi o desafio mais trabalhoso dos cinco, mas a organização que o projeto já tinha (migrations bem definidas, services isolados) ajudou bastante a não ter grandes problemas ao longo do caminho.
+
+Ao criar a migration para o MySQL, percebi que as tabelas originais do projeto (produto, categoria, usuário, empresa e os vínculos entre eles) nunca tiveram uma migration, elas só existiam dentro do arquivo `db.sqlite3`. Precisei criar uma migration com o esquema dessas tabelas, com uma data anterior às outras migrations já existentes, para que ela rodasse primeiro.
+
+Optei por não colocar chaves estrangeiras de verdade no MySQL. O SQLite original também as declarava no texto, mas nunca as impunha de fato. Além disso, o banco tem logs apontando para usuários que não existem (o "usuario desconhecido" do relatório), e uma chave estrangeira real impediria esses registros de existir.
+
+Usando o `db-backup.sqlite3` (o estado original do banco, de antes de qualquer alteração minha), remontei os dados de fábrica através de uma seed, com os mesmos ids e valores que estavam no banco desde o primeiro commit do projeto.
+
+Para validar a troca, testei o ciclo completo: derrubei todas as migrations até o banco ficar vazio, migrei e semeei de novo do zero, e bati nas rotas da API para confirmar que os dados voltavam exatamente como no estado de fábrica (18 produtos, 6 categorias, e assim por diante). O `check_deploy.sh` eu rodei à parte, para confirmar que o código continuava passando no lint, na análise estática e nos testes depois de toda essa mudança.
+
 ### Observações (na ordem do desenvolvimento)
 
 1. Durante o preparo do ambiente do docker, eu notei que no `README` o comando de reverter migration era `rollback`, no `composer.json` era `rollback-migration`, optei por alterar no `composer.json` para apenas `rollback` para seguir o `README`.
@@ -304,4 +316,5 @@ Testei os dois cenários antes de considerar pronto: com tudo passando, e força
 - Rodar migrations: `docker compose run --rm app composer migrate`
 - Criar migration: `docker compose run --rm app composer create-migration`
 - Reverter migration: `docker compose run --rm app composer rollback`
+- Popular o banco com os dados de fábrica: `docker compose run --rm app composer seed`
 - Rodar testes: `docker compose run --rm app composer test`
