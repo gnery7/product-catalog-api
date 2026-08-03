@@ -4,6 +4,8 @@ RUN apt-get update && apt-get install -y git unzip && rm -rf /var/lib/apt/lists/
 
 RUN docker-php-ext-install pdo_mysql
 
+RUN git config --global --add safe.directory /app
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
