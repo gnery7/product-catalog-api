@@ -55,6 +55,11 @@ A documentação da API se encontra na pasta `docs/api-docs.pdf`
 - O banco de dados é um _sqlite_ simples e já vem com dados preenchidos por padrão no projeto;
 - O banco tem um arquivo de backup em `db/db-backup.sqlite3` com o estado inicial do projeto caso precise ser "resetado".
 
+> [!NOTE]
+> Esse projeto foi migrado para rodar via Docker com MySQL. Ver a seção "Ambiente Docker" e a observação "Migrando o banco de SQLite para MySQL" para o passo a passo atualizado.
+
+
+
 ### Migrations
 - Funcionalidades que exijam modificações no banco de dados (seja nos dados ou estrutura) **devem estar contidas em _migrations_**, não enviadas diretamente com o banco;
 - **Seu arquivo de banco** `db.sqlite3` **não será utilizado para avaliação** do teste, por isso é importante persistir mudanças necessárias em migrations;
@@ -326,7 +331,7 @@ Criei também um middleware específico (`RequireAdminUserMiddleware`) que valid
 
 14. Revisando a categoria, reparei que ela sempre filtra por company_id (getAll, getOne, updateOne, deleteOne), mas o produto nunca fez isso: qualquer admin conseguia ver, editar ou remover o produto de outra empresa, bastando saber o id, e também conseguia cadastrar um produto em nome de uma empresa que não era a dele, desde que ela existisse de verdade. Ajustei o produto para seguir o mesmo padrão da categoria: getOne, updateOne e deleteOne agora só enxergam produtos da empresa do próprio admin, e o cadastro só aceita o company_id da empresa dele. Como o banco de teste só tem uma empresa cadastrada, esse vazamento não dava pra reproduzir na prática, os testes novos precisaram de uma segunda empresa fictícia pra provar o isolamento.
 
-15. Revisando o projeto, percebi que a validação de isolamento entre empresas (observação 14) só é comprovada pelos testes automatizados, já que o banco só tem uma empresa cadastrada e não existe rota para criar uma nova. Criei o script segunda-empresa.sh, que facilita bastante o processo de verificação e confirmação dessa proposta, ele insere direto no banco uma segunda empresa, um admin dela e um produto, contornando a própria API (que bloqueia esse cenário depois da correção). Com isso dá pra testar pelo Postman que o admin da XPTO recebe 404 ao tentar ver, editar ou remover o produto de outra empresa, e que o admin da empresa nova enxerga o próprio produto normalmente. O script fica separado do seed principal, que continua fiel aos dados originais do db-backup.sqlite3.
+15. Revisando o projeto, percebi que a validação de isolamento entre empresas (observação 14) só é comprovada pelos testes automatizados, já que o banco só tem uma empresa cadastrada e não existe rota para criar uma nova. Criei o seed SegundaEmpresaSeeder, rodado separadamente via composer seed-segunda-empresa, que facilita bastante o processo de verificação e confirmação dessa proposta: ele insere uma segunda empresa, um admin dela e um produto, contornando a própria API (que bloqueia esse cenário depois da correção). Com isso dá pra testar pelo Postman que o admin da XPTO recebe 404 ao tentar ver, editar ou remover o produto de outra empresa, e que o admin da empresa nova enxerga o próprio produto normalmente. Esse seed fica de fora do composer seed padrão, que continua fiel aos dados originais do db-backup.sqlite3.
 
 16. Reparei que o db-backup.sqlite3 nunca tinha sido versionado, porque a regra db/db*.sqlite3 do .gitignore original pegava tanto ele quanto o banco de trabalho (db.sqlite3, que o próprio README diz que não é avaliado). Como o backup é um arquivo de referência deliberado (é a partir dele que extraí os dados de fábrica da seed), ajustei o .gitignore para continuar ignorando o db.sqlite3 mas permitir o db-backup.sqlite3, e commitei ele.
 
@@ -337,4 +342,5 @@ Criei também um middleware específico (`RequireAdminUserMiddleware`) que valid
 - Criar migration: `docker compose run --rm app composer create-migration`
 - Reverter migration: `docker compose run --rm app composer rollback`
 - Popular o banco com os dados de fábrica: `docker compose run --rm app composer seed`
+- Popular o banco com a segunda empresa de teste (item 15 das observações, para mais informações): `docker compose run --rm app composer seed-segunda-empresa`
 - Rodar testes: `docker compose run --rm app composer test`

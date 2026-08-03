@@ -233,12 +233,12 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}{{products}}/19",
+              "raw": "{{base_url}}{{products}}/18",
               "host": [
                 "{{base_url}}{{products}}"
               ],
               "path": [
-                "19"
+                "18"
               ]
             }
           },
@@ -269,12 +269,12 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}{{products}}/19",
+              "raw": "{{base_url}}{{products}}/18",
               "host": [
                 "{{base_url}}{{products}}"
               ],
               "path": [
-                "19"
+                "18"
               ]
             }
           },
@@ -460,12 +460,12 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}{{categories}}/7",
+              "raw": "{{base_url}}{{categories}}/6",
               "host": [
                 "{{base_url}}{{categories}}"
               ],
               "path": [
-                "7"
+                "6"
               ]
             }
           },
@@ -496,12 +496,12 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}{{categories}}/7",
+              "raw": "{{base_url}}{{categories}}/6",
               "host": [
                 "{{base_url}}{{categories}}"
               ],
               "path": [
-                "7"
+                "6"
               ]
             }
           },
