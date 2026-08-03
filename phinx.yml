@@ -7,8 +7,13 @@ environments:
  default_environment: development
 
  development:
-  adapter: sqlite
-  name: ./db/db
+  adapter: mysql
+  host: db
+  name: teste_backend
+  user: teste_backend
+  pass: teste_backend
+  port: 3306
+  charset: utf8mb4
 
 templates:
   file: ./db/migrations/templates/template_migration.php.template

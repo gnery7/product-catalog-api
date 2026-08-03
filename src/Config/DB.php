@@ -8,10 +8,8 @@ class DB
 
     public static function connect()
     {
-        $dbPath = dirname(__DIR__, 2) . '/db/db.sqlite3';
-
         if (!isset(self::$pdo)) {
-            self::$pdo = new \PDO('sqlite:' . $dbPath, null, null, [
+            self::$pdo = new \PDO('mysql:host=db;dbname=teste_backend;charset=utf8mb4', 'teste_backend', 'teste_backend', [
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
             ]);
         }

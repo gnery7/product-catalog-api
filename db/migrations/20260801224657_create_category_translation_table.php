@@ -9,7 +9,7 @@ class CreateCategoryTranslationTable extends AbstractMigration
     $table = $this->table('category_translation');
     $table
       ->addColumn('category_id', 'integer')
-      ->addColumn('lang_code', 'text')
+      ->addColumn('lang_code', 'string')
       ->addColumn('label', 'text')
       ->addIndex(['category_id', 'lang_code'], ['unique' => true])
       ->create();
