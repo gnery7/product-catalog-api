@@ -3,3 +3,4 @@ vendor
 .phpunit.xml
 .phpunit.result.cache
 db/db*.sqlite3
+!db/db-backup.sqlite3
