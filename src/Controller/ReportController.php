@@ -58,7 +58,8 @@ class ReportController
 
         foreach ($products as $product) {
             $stm = $this->companyService->getNameById($product->company_id);
-            $companyName = $stm->fetch()->name;
+            $fetchedCompany = $stm->fetch();
+            $companyName = $fetchedCompany !== false ? $fetchedCompany->name : 'empresa desconhecida';
 
             $stm = $this->productService->getLog($product->id);
             $productLogs = $stm->fetchAll();
@@ -68,15 +69,20 @@ class ReportController
                 $userName = $productLog->admin_user_name ?? 'usuario desconhecido';
                 $actionLabel = $actionLabels[$productLog->action] ?? $productLog->action;
                 $logDate = date('d/m/Y H:i:s', strtotime($productLog->timestamp));
-                $formattedLogs[] = "({$userName}, {$actionLabel}, {$logDate})";
+                $formattedLogs[] = htmlspecialchars("({$userName}, {$actionLabel}, {$logDate})");
+            }
+
+            $escapedCategories = [];
+            foreach ($product->categories as $categoryTitle) {
+                $escapedCategories[] = htmlspecialchars((string)$categoryTitle);
             }
 
             $row = [];
             $row[] = $product->id;
-            $row[] = $companyName;
-            $row[] = $product->title;
+            $row[] = htmlspecialchars((string)$companyName);
+            $row[] = htmlspecialchars((string)$product->title);
             $row[] = $product->price;
-            $row[] = implode(', ', $product->categories);
+            $row[] = implode(', ', $escapedCategories);
             $row[] = $product->created_at;
             $row[] = implode(',<br>', $formattedLogs);
             $data[] = $row;
