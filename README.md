@@ -288,6 +288,14 @@ Usando o `db-backup.sqlite3` (o estado original do banco, de antes de qualquer a
 
 Para validar a troca, testei o ciclo completo: derrubei todas as migrations até o banco ficar vazio, migrei e semeei de novo do zero, e bati nas rotas da API para confirmar que os dados voltavam exatamente como no estado de fábrica (18 produtos, 6 categorias, e assim por diante). O `check_deploy.sh` eu rodei à parte, para confirmar que o código continuava passando no lint, na análise estática e nos testes depois de toda essa mudança.
 
+### Tratamento de erros e validação do admin_user_id
+
+Testando em outra máquina sem o Postman, usei o HTTPie e esqueci de mandar o header `admin_user_id`. A API respondeu com um erro cru do PHP, sem nenhuma explicação do problema. Resolvi isso de duas formas complementares.
+
+Registrei o middleware de erro do próprio Slim, que transforma qualquer exceção não tratada numa resposta JSON limpa, em vez da página de erro crua do PHP.
+
+Criei também um middleware específico (`RequireAdminUserMiddleware`) que valida o header antes de qualquer rota rodar: se estiver ausente ou não for um número, responde `400` com uma mensagem explicando o motivo; se o id não corresponder a um usuário real no banco, responde `401`. As rotas que não usam esse header (como `/companies`) ficam de fora dessa validação.
+
 ### Observações (na ordem do desenvolvimento)
 
 1. Durante o preparo do ambiente do docker, eu notei que no `README` o comando de reverter migration era `rollback`, no `composer.json` era `rollback-migration`, optei por alterar no `composer.json` para apenas `rollback` para seguir o `README`.
