@@ -87,6 +87,7 @@ class ProductController
         ResponseInterface $response,
         array $args
     ): ResponseInterface {
+        $adminUserId = $request->getHeader('admin_user_id')[0];
         $queryParams = $request->getQueryParams();
         $lang = null;
         if (isset($queryParams['lang'])) {
@@ -96,7 +97,7 @@ class ProductController
             }
             $lang = $queryParams['lang'];
         }
-        $stm = $this->service->getOne($args['id']);
+        $stm = $this->service->getOne($args['id'], $adminUserId);
         $fetch = $stm->fetch();
         if ($fetch === false) {
             $response->getBody()->write(json_encode(['error' => 'produto nao encontrado']));
@@ -104,7 +105,6 @@ class ProductController
         }
         $product = Product::hydrateByFetch($fetch);
 
-        $adminUserId = $request->getHeader('admin_user_id')[0];
         $productCategories = $this->categoryService->getProductCategory($adminUserId, $product->id, $lang)->fetchAll();
         $categoryTitles = [];
         foreach ($productCategories as $productCategory) {
@@ -115,6 +115,7 @@ class ProductController
         $response->getBody()->write(json_encode($product));
         return $response->withStatus(200);
     }
+
 
     public function insertOne(
         ServerRequestInterface $request,

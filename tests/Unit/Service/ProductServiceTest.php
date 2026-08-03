@@ -65,6 +65,7 @@ class ProductServiceTest extends TestCase
         ");
 
         $this->pdo->exec("INSERT INTO company (id, name) VALUES (1, 'empresa teste')");
+        $this->pdo->exec("INSERT INTO company (id, name) VALUES (2, 'outra empresa')");
         $this->pdo->exec("INSERT INTO admin_user (id, company_id, name) VALUES (1, 1, 'rivers')");
         $this->pdo->exec("INSERT INTO category (id, company_id, title, active) VALUES (1, 1, 'clothing', 1)");
         $this->pdo->exec("INSERT INTO category (id, company_id, title, active) VALUES (2, 1, 'house', 1)");
@@ -209,5 +210,68 @@ class ProductServiceTest extends TestCase
         $result = $this->service->insertOne($body, 1);
 
         $this->assertEquals('categoria invalida', $result);
+    }
+        public function testGetOneReturnsFalseWhenProductBelongsToAnotherCompany(): void
+    {
+        $this->pdo->exec("
+            INSERT INTO product (company_id, title, price, active, stock)
+            VALUES (2, 'produto de outra empresa', 10, 1, 5)
+        ");
+        $productId = $this->pdo->lastInsertId();
+
+        $stm = $this->service->getOne($productId, 1);
+
+        $this->assertFalse($stm->fetch());
+    }
+
+    public function testUpdateOneReturnsFalseWhenProductBelongsToAnotherCompany(): void
+    {
+        $this->pdo->exec("
+            INSERT INTO product (company_id, title, price, active, stock)
+            VALUES (2, 'produto de outra empresa', 10, 1, 5)
+        ");
+        $productId = $this->pdo->lastInsertId();
+
+        $body = [
+            'company_id' => 2,
+            'title' => 'tentativa de edicao',
+            'price' => 99,
+            'active' => 1,
+            'category_id' => 1,
+        ];
+
+        $result = $this->service->updateOne($productId, $body, 1);
+
+        $this->assertFalse($result);
+    }
+
+    public function testDeleteOneReturnsFalseWhenProductBelongsToAnotherCompany(): void
+    {
+        $this->pdo->exec("
+            INSERT INTO product (company_id, title, price, active, stock)
+            VALUES (2, 'produto de outra empresa', 10, 1, 5)
+        ");
+        $productId = $this->pdo->lastInsertId();
+
+        $result = $this->service->deleteOne($productId, 1);
+
+        $this->assertFalse($result);
+
+        $count = $this->pdo->query("SELECT COUNT(*) FROM product WHERE id = {$productId}")->fetchColumn();
+        $this->assertEquals(1, $count);
+    }
+    public function testInsertOneReturnsEmpresaInvalidaWhenCompanyBelongsToAnotherAdmin(): void
+    {
+        $body = [
+            'company_id' => 2,
+            'title' => 'produto qualquer',
+            'price' => 10,
+            'active' => 1,
+            'category_id' => 1,
+        ];
+
+        $result = $this->service->insertOne($body, 1);
+
+        $this->assertEquals('empresa invalida', $result);
     }
 }

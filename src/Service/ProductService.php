@@ -57,23 +57,27 @@ class ProductService
         return $stm;
     }
 
-    public function getOne($id)
+    public function getOne($id, $adminUserId)
     {
+        $companyId = $this->getCompanyFromAdminUser($adminUserId);
+
         $stm = $this->pdo->prepare("
             SELECT *
             FROM product
             WHERE id = {$id}
+            AND company_id = {$companyId}
         ");
         $stm->execute();
 
         return $stm;
     }
 
+
     public function insertOne($body, $adminUserId)
     {
-        $stm = $this->pdo->prepare("SELECT id FROM company WHERE id = {$body['company_id']}");
-        $stm->execute();
-        if ($stm->fetch() === false) {
+        $companyId = $this->getCompanyFromAdminUser($adminUserId);
+
+        if ((int)$body['company_id'] !== (int)$companyId) {
             return 'empresa invalida';
         }
 
@@ -133,13 +137,16 @@ class ProductService
 
         return $stm->execute();
     }
-
-
-
-
     public function updateOne($id, $body, $adminUserId)
     {
-        $stm = $this->pdo->prepare("SELECT id FROM product WHERE id = {$id}");
+        $companyId = $this->getCompanyFromAdminUser($adminUserId);
+
+        $stm = $this->pdo->prepare("
+            SELECT id
+            FROM product
+            WHERE id = {$id}
+            AND company_id = {$companyId}
+        ");
         $stm->execute();
         if ($stm->fetch() === false) {
             return false;
@@ -157,6 +164,7 @@ class ProductService
                 price = {$body['price']},
                 active = {$body['active']}{$stockUpdate}
             WHERE id = {$id}
+            AND company_id = {$companyId}
         ");
         if (!$stm->execute()) {
             return false;
@@ -189,7 +197,14 @@ class ProductService
 
     public function deleteOne($id, $adminUserId)
     {
-        $stm = $this->pdo->prepare("SELECT id FROM product WHERE id = {$id}");
+        $companyId = $this->getCompanyFromAdminUser($adminUserId);
+
+        $stm = $this->pdo->prepare("
+            SELECT id
+            FROM product
+            WHERE id = {$id}
+            AND company_id = {$companyId}
+        ");
         $stm->execute();
         if ($stm->fetch() === false) {
             return false;
