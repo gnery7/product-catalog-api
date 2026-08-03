@@ -6,6 +6,7 @@ use Contatoseguro\TesteBackend\Controller\HomeController;
 use Contatoseguro\TesteBackend\Controller\ProductController;
 use Contatoseguro\TesteBackend\Controller\ReportController;
 use Contatoseguro\TesteBackend\Controller\CommentController;
+use Contatoseguro\TesteBackend\Middleware\RequireAdminUserMiddleware;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -25,14 +26,13 @@ $app->group('/products', function (RouteCollectorProxy $group) {
     $group->delete('/{id}', [ProductController::class, 'deleteOne']);
     $group->post('/{id}/comments', [CommentController::class, 'insertOne']);
     $group->get('/{id}/comments', [CommentController::class, 'getByProduct']);
-});
+})->add(RequireAdminUserMiddleware::class);
 
 $app->group('/comments', function (RouteCollectorProxy $group) {
     $group->post('/{id}/replies', [CommentController::class, 'insertReply']);
     $group->post('/{id}/like', [CommentController::class, 'insertLike']);
     $group->delete('/{id}', [CommentController::class, 'deleteOne']);
-});
-
+})->add(RequireAdminUserMiddleware::class);
 
 $app->group('/categories', function (RouteCollectorProxy $group) {
     $group->get('', [CategoryController::class, 'getAll']);
@@ -41,6 +41,6 @@ $app->group('/categories', function (RouteCollectorProxy $group) {
     $group->post('/{id}', [CategoryController::class, 'insertTranslations']);
     $group->put('/{id}', [CategoryController::class, 'updateOne']);
     $group->delete('/{id}', [CategoryController::class, 'deleteOne']);
-});
+})->add(RequireAdminUserMiddleware::class);
 
-$app->get('/report', [ReportController::class, 'generate']);
+$app->get('/report', [ReportController::class, 'generate'])->add(RequireAdminUserMiddleware::class);
