@@ -133,6 +133,19 @@ class CategoryService
 
     public function updateOne($id, $body, $adminUserId)
     {
+        $companyId = $this->getCompanyFromAdminUser($adminUserId);
+
+        $stm = $this->pdo->prepare("
+            SELECT id
+            FROM category
+            WHERE id = {$id}
+            AND company_id = {$companyId}
+        ");
+        $stm->execute();
+        if ($stm->fetch() === false) {
+            return false;
+        }
+
         $active = (int)$body['active'];
 
         $stm = $this->pdo->prepare("
@@ -140,7 +153,7 @@ class CategoryService
             SET title = '{$body['title']}',
                 active = {$active}
             WHERE id = {$id}
-            AND company_id = {$this->getCompanyFromAdminUser($adminUserId)}
+            AND company_id = {$companyId}
         ");
 
         return $stm->execute();
@@ -148,11 +161,24 @@ class CategoryService
 
     public function deleteOne($id, $adminUserId)
     {
+        $companyId = $this->getCompanyFromAdminUser($adminUserId);
+
+        $stm = $this->pdo->prepare("
+            SELECT id
+            FROM category
+            WHERE id = {$id}
+            AND company_id = {$companyId}
+        ");
+        $stm->execute();
+        if ($stm->fetch() === false) {
+            return false;
+        }
+
         $stm = $this->pdo->prepare("
             DELETE
             FROM category
             WHERE id = {$id}
-            AND company_id = {$this->getCompanyFromAdminUser($adminUserId)}
+            AND company_id = {$companyId}
         ");
 
         return $stm->execute();

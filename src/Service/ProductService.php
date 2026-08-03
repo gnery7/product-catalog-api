@@ -71,6 +71,18 @@ class ProductService
 
     public function insertOne($body, $adminUserId)
     {
+        $stm = $this->pdo->prepare("SELECT id FROM company WHERE id = {$body['company_id']}");
+        $stm->execute();
+        if ($stm->fetch() === false) {
+            return 'empresa invalida';
+        }
+
+        $stm = $this->pdo->prepare("SELECT id FROM category WHERE id = {$body['category_id']}");
+        $stm->execute();
+        if ($stm->fetch() === false) {
+            return 'categoria invalida';
+        }
+
         $stock = (int)($body['stock'] ?? 0);
 
         $stm = $this->pdo->prepare("
@@ -123,8 +135,16 @@ class ProductService
     }
 
 
+
+
     public function updateOne($id, $body, $adminUserId)
     {
+        $stm = $this->pdo->prepare("SELECT id FROM product WHERE id = {$id}");
+        $stm->execute();
+        if ($stm->fetch() === false) {
+            return false;
+        }
+
         $stockUpdate = "";
         if (isset($body['stock'])) {
             $stockUpdate = ", stock = " . (int)$body['stock'];
@@ -169,6 +189,12 @@ class ProductService
 
     public function deleteOne($id, $adminUserId)
     {
+        $stm = $this->pdo->prepare("SELECT id FROM product WHERE id = {$id}");
+        $stm->execute();
+        if ($stm->fetch() === false) {
+            return false;
+        }
+
         $stm = $this->pdo->prepare("
             DELETE FROM product_category WHERE product_id = {$id}
         ");

@@ -97,7 +97,12 @@ class ProductController
             $lang = $queryParams['lang'];
         }
         $stm = $this->service->getOne($args['id']);
-        $product = Product::hydrateByFetch($stm->fetch());
+        $fetch = $stm->fetch();
+        if ($fetch === false) {
+            $response->getBody()->write(json_encode(['error' => 'produto nao encontrado']));
+            return $response->withStatus(404);
+        }
+        $product = Product::hydrateByFetch($fetch);
 
         $adminUserId = $request->getHeader('admin_user_id')[0];
         $productCategories = $this->categoryService->getProductCategory($adminUserId, $product->id, $lang)->fetchAll();
@@ -124,12 +129,23 @@ class ProductController
             return $response->withStatus(400);
         }
 
-        if ($this->service->insertOne($body, $adminUserId)) {
+        $result = $this->service->insertOne($body, $adminUserId);
+
+        if ($result === true) {
             return $response->withStatus(200);
-        } else {
+        }
+        if ($result === 'empresa invalida') {
+            $response->getBody()->write(json_encode(['error' => 'empresa nao encontrada']));
             return $response->withStatus(404);
         }
+        if ($result === 'categoria invalida') {
+            $response->getBody()->write(json_encode(['error' => 'categoria nao encontrada']));
+            return $response->withStatus(404);
+        }
+        $response->getBody()->write(json_encode(['error' => 'nao foi possivel criar o produto']));
+        return $response->withStatus(404);
     }
+
 
     public function updateOne(
         ServerRequestInterface $request,
@@ -146,6 +162,7 @@ class ProductController
         if ($this->service->updateOne($args['id'], $body, $adminUserId)) {
             return $response->withStatus(200);
         } else {
+            $response->getBody()->write(json_encode(['error' => 'produto nao encontrado']));
             return $response->withStatus(404);
         }
     }
@@ -160,6 +177,7 @@ class ProductController
         if ($this->service->deleteOne($args['id'], $adminUserId)) {
             return $response->withStatus(200);
         } else {
+            $response->getBody()->write(json_encode(['error' => 'produto nao encontrado']));
             return $response->withStatus(404);
         }
     }

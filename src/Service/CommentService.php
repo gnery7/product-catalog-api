@@ -15,6 +15,16 @@ class CommentService
     public function insertOne($productId, $adminUserId, $content)
     {
         $stm = $this->pdo->prepare("
+            SELECT id
+            FROM product
+            WHERE id = :product_id
+        ");
+        $stm->execute([':product_id' => $productId]);
+        if ($stm->fetch() === false) {
+            return false;
+        }
+
+        $stm = $this->pdo->prepare("
             INSERT INTO comment (
                 product_id,
                 admin_user_id,
@@ -146,6 +156,16 @@ class CommentService
     }
     public function getByProduct($productId)
     {
+        $stm = $this->pdo->prepare("
+            SELECT id
+            FROM product
+            WHERE id = :product_id
+        ");
+        $stm->execute([':product_id' => $productId]);
+        if ($stm->fetch() === false) {
+            return false;
+        }
+
         $stm = $this->pdo->prepare("
             SELECT c.id, c.admin_user_id, au.name as author, c.parent_id, c.content, c.created_at,
                 (SELECT COUNT(*) FROM comment_like cl WHERE cl.comment_id = c.id) as likes

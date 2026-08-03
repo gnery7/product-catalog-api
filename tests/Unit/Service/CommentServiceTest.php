@@ -16,6 +16,13 @@ class CommentServiceTest extends TestCase
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ
         ]);
         $this->pdo->exec("
+            CREATE TABLE product (
+                id INTEGER PRIMARY KEY AUTOINCREMENT
+            )
+        ");
+        $this->pdo->exec("INSERT INTO product (id) VALUES (1)");
+        $this->pdo->exec("INSERT INTO product (id) VALUES (7)");
+        $this->pdo->exec("
             CREATE TABLE comment (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 product_id INTEGER,
@@ -58,6 +65,13 @@ class CommentServiceTest extends TestCase
     public function testInsertReplyReturnsFalseWhenParentDoesNotExist(): void
     {
         $result = $this->service->insertReply(999, 1, 'resposta pro nada');
+
+        $this->assertFalse($result);
+    }
+
+    public function testInsertOneReturnsFalseWhenProductDoesNotExist(): void
+    {
+        $result = $this->service->insertOne(999, 1, 'comentario pro nada');
 
         $this->assertFalse($result);
     }
@@ -108,5 +122,11 @@ class CommentServiceTest extends TestCase
 
         $this->assertEquals(0, $commentCount);
         $this->assertEquals(0, $likeCount);
+    }
+    public function testGetByProductReturnsFalseWhenProductDoesNotExist(): void
+    {
+        $result = $this->service->getByProduct(999);
+
+        $this->assertFalse($result);
     }
 }

@@ -31,9 +31,11 @@ class CommentController
         if ($this->service->insertOne($args['id'], $adminUserId, $body['content'])) {
             return $response->withStatus(200);
         } else {
+            $response->getBody()->write(json_encode(['error' => 'produto nao encontrado']));
             return $response->withStatus(404);
         }
     }
+
 
     public function insertReply(
         ServerRequestInterface $request,
@@ -51,6 +53,7 @@ class CommentController
         if ($this->service->insertReply($args['id'], $adminUserId, $body['content'])) {
             return $response->withStatus(200);
         } else {
+            $response->getBody()->write(json_encode(['error' => 'comentario nao encontrado']));
             return $response->withStatus(404);
         }
     }
@@ -71,6 +74,7 @@ class CommentController
             $response->getBody()->write(json_encode(['error' => 'comentario ja curtido por este usuario']));
             return $response->withStatus(400);
         }
+        $response->getBody()->write(json_encode(['error' => 'comentario nao encontrado']));
         return $response->withStatus(404);
     }
 
@@ -90,6 +94,7 @@ class CommentController
             $response->getBody()->write(json_encode(['error' => 'so e possivel remover os proprios comentarios']));
             return $response->withStatus(403);
         }
+        $response->getBody()->write(json_encode(['error' => 'comentario nao encontrado']));
         return $response->withStatus(404);
     }
 
@@ -98,7 +103,12 @@ class CommentController
         ResponseInterface $response,
         array $args
     ): ResponseInterface {
-        $fetchedComments = $this->service->getByProduct($args['id'])->fetchAll();
+        $stm = $this->service->getByProduct($args['id']);
+        if ($stm === false) {
+            $response->getBody()->write(json_encode(['error' => 'produto nao encontrado']));
+            return $response->withStatus(404);
+        }
+        $fetchedComments = $stm->fetchAll();
 
         $commentsById = [];
         foreach ($fetchedComments as $fetchedComment) {

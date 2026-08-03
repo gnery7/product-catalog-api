@@ -17,6 +17,12 @@ class ProductServiceTest extends TestCase
         ]);
 
         $this->pdo->exec("
+            CREATE TABLE company (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT
+            )
+        ");
+        $this->pdo->exec("
             CREATE TABLE admin_user (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 company_id INTEGER,
@@ -58,6 +64,7 @@ class ProductServiceTest extends TestCase
             )
         ");
 
+        $this->pdo->exec("INSERT INTO company (id, name) VALUES (1, 'empresa teste')");
         $this->pdo->exec("INSERT INTO admin_user (id, company_id, name) VALUES (1, 1, 'rivers')");
         $this->pdo->exec("INSERT INTO category (id, company_id, title, active) VALUES (1, 1, 'clothing', 1)");
         $this->pdo->exec("INSERT INTO category (id, company_id, title, active) VALUES (2, 1, 'house', 1)");
@@ -152,5 +159,55 @@ class ProductServiceTest extends TestCase
 
         $this->assertEquals('roupas', $byTitle['produto de roupa']);
         $this->assertEquals('house', $byTitle['produto de casa']);
+    }
+    public function testDeleteOneReturnsFalseWhenProductDoesNotExist(): void
+    {
+        $result = $this->service->deleteOne(999, 1);
+
+        $this->assertFalse($result);
+    }
+
+    public function testUpdateOneReturnsFalseWhenProductDoesNotExist(): void
+    {
+        $body = [
+            'company_id' => 1,
+            'title' => 'produto qualquer',
+            'price' => 10,
+            'active' => 1,
+            'category_id' => 1,
+        ];
+
+        $result = $this->service->updateOne(999, $body, 1);
+
+        $this->assertFalse($result);
+    }
+        public function testInsertOneReturnsEmpresaInvalidaWhenCompanyDoesNotExist(): void
+    {
+        $body = [
+            'company_id' => 999,
+            'title' => 'produto qualquer',
+            'price' => 10,
+            'active' => 1,
+            'category_id' => 1,
+        ];
+
+        $result = $this->service->insertOne($body, 1);
+
+        $this->assertEquals('empresa invalida', $result);
+    }
+
+    public function testInsertOneReturnsCategoriaInvalidaWhenCategoryDoesNotExist(): void
+    {
+        $body = [
+            'company_id' => 1,
+            'title' => 'produto qualquer',
+            'price' => 10,
+            'active' => 1,
+            'category_id' => 999,
+        ];
+
+        $result = $this->service->insertOne($body, 1);
+
+        $this->assertEquals('categoria invalida', $result);
     }
 }

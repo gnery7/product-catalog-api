@@ -66,6 +66,7 @@ class CategoryController
         if ($this->service->insertOne($body, $adminUserId)) {
             return $response->withStatus(200);
         } else {
+            $response->getBody()->write(json_encode(['error' => 'nao foi possivel criar a categoria']));
             return $response->withStatus(404);
         }
     }
@@ -107,6 +108,7 @@ class CategoryController
         if ($this->service->updateOne($args['id'], $body, $adminUserId)) {
             return $response->withStatus(200);
         } else {
+            $response->getBody()->write(json_encode(['error' => 'categoria nao encontrada']));
             return $response->withStatus(404);
         }
     }
@@ -121,6 +123,7 @@ class CategoryController
         if ($this->service->deleteOne($args['id'], $adminUserId)) {
             return $response->withStatus(200);
         } else {
+            $response->getBody()->write(json_encode(['error' => 'categoria nao encontrada']));
             return $response->withStatus(404);
         }
     }
