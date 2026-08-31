@@ -2,6 +2,8 @@
 
 namespace Contatoseguro\TesteBackend\Controller;
 
+use Contatoseguro\TesteBackend\Exception\InvalidCategoryException;
+use Contatoseguro\TesteBackend\Exception\InvalidCompanyException;
 use Contatoseguro\TesteBackend\Model\Product;
 use Contatoseguro\TesteBackend\Service\CategoryService;
 use Contatoseguro\TesteBackend\Service\ProductService;
@@ -130,18 +132,18 @@ class ProductController
             return $response->withStatus(400);
         }
 
-        $result = $this->service->insertOne($body, $adminUserId);
+        try {
+            $result = $this->service->insertOne($body, $adminUserId);
+        } catch (InvalidCompanyException $e) {
+            $response->getBody()->write(json_encode(['error' => 'empresa nao encontrada']));
+            return $response->withStatus(404);
+        } catch (InvalidCategoryException $e) {
+            $response->getBody()->write(json_encode(['error' => 'categoria nao encontrada']));
+            return $response->withStatus(404);
+        }
 
         if ($result === true) {
             return $response->withStatus(200);
-        }
-        if ($result === 'empresa invalida') {
-            $response->getBody()->write(json_encode(['error' => 'empresa nao encontrada']));
-            return $response->withStatus(404);
-        }
-        if ($result === 'categoria invalida') {
-            $response->getBody()->write(json_encode(['error' => 'categoria nao encontrada']));
-            return $response->withStatus(404);
         }
         $response->getBody()->write(json_encode(['error' => 'nao foi possivel criar o produto']));
         return $response->withStatus(404);

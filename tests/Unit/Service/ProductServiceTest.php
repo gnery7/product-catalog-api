@@ -3,6 +3,8 @@
 namespace ContatoSeguro\Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
+use Contatoseguro\TesteBackend\Exception\InvalidCategoryException;
+use Contatoseguro\TesteBackend\Exception\InvalidCompanyException;
 use Contatoseguro\TesteBackend\Service\ProductService;
 
 class ProductServiceTest extends TestCase
@@ -182,7 +184,7 @@ class ProductServiceTest extends TestCase
 
         $this->assertFalse($result);
     }
-        public function testInsertOneReturnsEmpresaInvalidaWhenCompanyDoesNotExist(): void
+        public function testInsertOneThrowsInvalidCompanyExceptionWhenCompanyDoesNotExist(): void
     {
         $body = [
             'company_id' => 999,
@@ -192,12 +194,12 @@ class ProductServiceTest extends TestCase
             'category_id' => 1,
         ];
 
-        $result = $this->service->insertOne($body, 1);
+        $this->expectException(InvalidCompanyException::class);
 
-        $this->assertEquals('empresa invalida', $result);
+        $this->service->insertOne($body, 1);
     }
 
-    public function testInsertOneReturnsCategoriaInvalidaWhenCategoryDoesNotExist(): void
+    public function testInsertOneThrowsInvalidCategoryExceptionWhenCategoryDoesNotExist(): void
     {
         $body = [
             'company_id' => 1,
@@ -207,9 +209,9 @@ class ProductServiceTest extends TestCase
             'category_id' => 999,
         ];
 
-        $result = $this->service->insertOne($body, 1);
+        $this->expectException(InvalidCategoryException::class);
 
-        $this->assertEquals('categoria invalida', $result);
+        $this->service->insertOne($body, 1);
     }
         public function testGetOneReturnsFalseWhenProductBelongsToAnotherCompany(): void
     {
@@ -260,7 +262,7 @@ class ProductServiceTest extends TestCase
         $count = $this->pdo->query("SELECT COUNT(*) FROM product WHERE id = {$productId}")->fetchColumn();
         $this->assertEquals(1, $count);
     }
-    public function testInsertOneReturnsEmpresaInvalidaWhenCompanyBelongsToAnotherAdmin(): void
+    public function testInsertOneThrowsInvalidCompanyExceptionWhenCompanyBelongsToAnotherAdmin(): void
     {
         $body = [
             'company_id' => 2,
@@ -270,8 +272,8 @@ class ProductServiceTest extends TestCase
             'category_id' => 1,
         ];
 
-        $result = $this->service->insertOne($body, 1);
+        $this->expectException(InvalidCompanyException::class);
 
-        $this->assertEquals('empresa invalida', $result);
+        $this->service->insertOne($body, 1);
     }
 }
