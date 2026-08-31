@@ -3,29 +3,28 @@
 namespace Contatoseguro\TesteBackend\Service;
 
 use Contatoseguro\TesteBackend\Config\DB;
+use Contatoseguro\TesteBackend\Service\Concerns\BuildsCategoryTranslationClause;
 
 class CategoryService
 {
+    use BuildsCategoryTranslationClause;
+
     private \PDO $pdo;
     public function __construct(?\PDO $pdo = null)
     {
         $this->pdo = $pdo ?? DB::connect();
     }
 
-    public function getAll($adminUserId, $lang = null)
+    public function getAll($adminUserId, $lang = null): \PDOStatement
     {
-        $categoryTitle = "c.title";
-        $translationJoin = "";
-        $binds = [];
-        if ($lang !== null) {
-            $categoryTitle = "COALESCE(ct.label, c.title)";
-            $translationJoin = " LEFT JOIN category_translation ct ON ct.category_id = c.id AND ct.lang_code = :lang";
-            $binds[':lang'] = $lang;
-        }
+        $clause = $this->buildCategoryTranslationClause($lang);
+        $binds = $clause['binds'];
+        $binds[':company_id'] = $this->getCompanyFromAdminUser($adminUserId);
+
         $query = "
-            SELECT c.id, c.company_id, {$categoryTitle} as title, c.active
-            FROM category c{$translationJoin}
-            WHERE (c.company_id = {$this->getCompanyFromAdminUser($adminUserId)} OR c.company_id IS NULL)
+            SELECT c.id, c.company_id, {$clause['titleExpr']} as title, c.active
+            FROM category c{$clause['join']}
+            WHERE (c.company_id = :company_id OR c.company_id IS NULL)
         ";
 
         $stm = $this->pdo->prepare($query);
@@ -35,22 +34,19 @@ class CategoryService
     }
 
 
-    public function getOne($adminUserId, $categoryId, $lang = null)
+    public function getOne($adminUserId, $categoryId, $lang = null): \PDOStatement
     {
-        $categoryTitle = "c.title";
-        $translationJoin = "";
-        $binds = [];
-        if ($lang !== null) {
-            $categoryTitle = "COALESCE(ct.label, c.title)";
-            $translationJoin = " LEFT JOIN category_translation ct ON ct.category_id = c.id AND ct.lang_code = :lang";
-            $binds[':lang'] = $lang;
-        }
+        $clause = $this->buildCategoryTranslationClause($lang);
+        $binds = $clause['binds'];
+        $binds[':company_id'] = $this->getCompanyFromAdminUser($adminUserId);
+        $binds[':category_id'] = $categoryId;
+
         $query = "
-            SELECT c.id, c.company_id, {$categoryTitle} as title, c.active
-            FROM category c{$translationJoin}
+            SELECT c.id, c.company_id, {$clause['titleExpr']} as title, c.active
+            FROM category c{$clause['join']}
             WHERE c.active = 1
-            AND (c.company_id = {$this->getCompanyFromAdminUser($adminUserId)} OR c.company_id IS NULL)
-            AND c.id = {$categoryId}
+            AND (c.company_id = :company_id OR c.company_id IS NULL)
+            AND c.id = :category_id
         ";
 
         $stm = $this->pdo->prepare($query);
@@ -60,23 +56,20 @@ class CategoryService
     }
 
 
-    public function getProductCategory($adminUserId, $productId, $lang = null)
+    public function getProductCategory($adminUserId, $productId, $lang = null): \PDOStatement
     {
-        $categoryTitle = "c.title";
-        $translationJoin = "";
-        $binds = [];
-        if ($lang !== null) {
-            $categoryTitle = "COALESCE(ct.label, c.title)";
-            $translationJoin = " LEFT JOIN category_translation ct ON ct.category_id = c.id AND ct.lang_code = :lang";
-            $binds[':lang'] = $lang;
-        }
+        $clause = $this->buildCategoryTranslationClause($lang);
+        $binds = $clause['binds'];
+        $binds[':company_id'] = $this->getCompanyFromAdminUser($adminUserId);
+        $binds[':product_id'] = $productId;
+
         $query = "
-            SELECT c.id, {$categoryTitle} as title
+            SELECT c.id, {$clause['titleExpr']} as title
             FROM category c
-            INNER JOIN product_category pc ON pc.cat_id = c.id{$translationJoin}
-            WHERE pc.product_id = {$productId}
+            INNER JOIN product_category pc ON pc.cat_id = c.id{$clause['join']}
+            WHERE pc.product_id = :product_id
             AND c.active = 1
-            AND (c.company_id = {$this->getCompanyFromAdminUser($adminUserId)} OR c.company_id IS NULL)
+            AND (c.company_id = :company_id OR c.company_id IS NULL)
         ";
 
         $stm = $this->pdo->prepare($query);
@@ -85,7 +78,7 @@ class CategoryService
         return $stm;
     }
 
-    public function insertOne($body, $adminUserId)
+    public function insertOne($body, $adminUserId): bool
     {
         $stm = $this->pdo->prepare("
             INSERT INTO category (
@@ -93,15 +86,19 @@ class CategoryService
                 title,
                 active
             ) VALUES (
-                {$this->getCompanyFromAdminUser($adminUserId)},
-                '{$body['title']}',
-                {$body['active']}
+                :company_id,
+                :title,
+                :active
             )
         ");
 
-        return $stm->execute();
+        return $stm->execute([
+            ':company_id' => $this->getCompanyFromAdminUser($adminUserId),
+            ':title' => $body['title'],
+            ':active' => $body['active'],
+        ]);
     }
-    public function insertTranslations($categoryId, $translations)
+    public function insertTranslations($categoryId, $translations): bool
     {
         $this->pdo->beginTransaction();
         $stm = $this->pdo->prepare("
@@ -131,17 +128,17 @@ class CategoryService
         return true;
     }
 
-    public function updateOne($id, $body, $adminUserId)
+    public function updateOne($id, $body, $adminUserId): bool
     {
         $companyId = $this->getCompanyFromAdminUser($adminUserId);
 
         $stm = $this->pdo->prepare("
             SELECT id
             FROM category
-            WHERE id = {$id}
-            AND company_id = {$companyId}
+            WHERE id = :id
+            AND company_id = :company_id
         ");
-        $stm->execute();
+        $stm->execute([':id' => $id, ':company_id' => $companyId]);
         if ($stm->fetch() === false) {
             return false;
         }
@@ -150,26 +147,31 @@ class CategoryService
 
         $stm = $this->pdo->prepare("
             UPDATE category
-            SET title = '{$body['title']}',
-                active = {$active}
-            WHERE id = {$id}
-            AND company_id = {$companyId}
+            SET title = :title,
+                active = :active
+            WHERE id = :id
+            AND company_id = :company_id
         ");
 
-        return $stm->execute();
+        return $stm->execute([
+            ':title' => $body['title'],
+            ':active' => $active,
+            ':id' => $id,
+            ':company_id' => $companyId,
+        ]);
     }
 
-    public function deleteOne($id, $adminUserId)
+    public function deleteOne($id, $adminUserId): bool
     {
         $companyId = $this->getCompanyFromAdminUser($adminUserId);
 
         $stm = $this->pdo->prepare("
             SELECT id
             FROM category
-            WHERE id = {$id}
-            AND company_id = {$companyId}
+            WHERE id = :id
+            AND company_id = :company_id
         ");
-        $stm->execute();
+        $stm->execute([':id' => $id, ':company_id' => $companyId]);
         if ($stm->fetch() === false) {
             return false;
         }
@@ -177,24 +179,22 @@ class CategoryService
         $stm = $this->pdo->prepare("
             DELETE
             FROM category
-            WHERE id = {$id}
-            AND company_id = {$companyId}
+            WHERE id = :id
+            AND company_id = :company_id
         ");
 
-        return $stm->execute();
+        return $stm->execute([':id' => $id, ':company_id' => $companyId]);
     }
 
     private function getCompanyFromAdminUser($adminUserId)
     {
-        $query = "
+        $stm = $this->pdo->prepare("
             SELECT company_id
             FROM admin_user
-            WHERE id = {$adminUserId}
-        ";
+            WHERE id = :id
+        ");
 
-        $stm = $this->pdo->prepare($query);
-
-        $stm->execute();
+        $stm->execute([':id' => $adminUserId]);
 
         return $stm->fetch()->company_id;
     }
