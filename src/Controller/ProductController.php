@@ -1,12 +1,12 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Controller;
+namespace App\Controller;
 
-use Contatoseguro\TesteBackend\Exception\InvalidCategoryException;
-use Contatoseguro\TesteBackend\Exception\InvalidCompanyException;
-use Contatoseguro\TesteBackend\Model\Product;
-use Contatoseguro\TesteBackend\Service\CategoryService;
-use Contatoseguro\TesteBackend\Service\ProductService;
+use App\Exception\InvalidCategoryException;
+use App\Exception\InvalidCompanyException;
+use App\Model\Product;
+use App\Service\CategoryService;
+use App\Service\ProductService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

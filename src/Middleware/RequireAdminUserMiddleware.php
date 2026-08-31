@@ -1,8 +1,8 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Middleware;
+namespace App\Middleware;
 
-use Contatoseguro\TesteBackend\Config\DB;
+use App\Config\DB;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;

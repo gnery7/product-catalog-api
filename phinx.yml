@@ -9,9 +9,9 @@ environments:
  development:
   adapter: mysql
   host: db
-  name: teste_backend
-  user: teste_backend
-  pass: teste_backend
+  name: product_catalog
+  user: product_catalog
+  pass: product_catalog
   port: 3306
   charset: utf8mb4
 

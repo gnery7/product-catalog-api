@@ -13,9 +13,9 @@ services:
     image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: teste_backend
-      MYSQL_USER: teste_backend
-      MYSQL_PASSWORD: teste_backend
+      MYSQL_DATABASE: product_catalog
+      MYSQL_USER: product_catalog
+      MYSQL_PASSWORD: product_catalog
     ports:
       - "3306:3306"
     volumes:

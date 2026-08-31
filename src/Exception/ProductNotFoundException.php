@@ -1,6 +1,6 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Exception;
+namespace App\Exception;
 
 class ProductNotFoundException extends \DomainException
 {

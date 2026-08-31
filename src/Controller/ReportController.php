@@ -1,9 +1,9 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Controller;
+namespace App\Controller;
 
-use Contatoseguro\TesteBackend\Service\CompanyService;
-use Contatoseguro\TesteBackend\Service\ProductService;
+use App\Service\CompanyService;
+use App\Service\ProductService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

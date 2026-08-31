@@ -1,6 +1,6 @@
 <?php
 
-use Contatoseguro\TesteBackend\Middleware\JsonResponseMiddleware;
+use App\Middleware\JsonResponseMiddleware;
 use Slim\App;
 use Slim\Handlers\ErrorHandler;
 

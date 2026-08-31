@@ -1,12 +1,12 @@
 <?php
 
-use Contatoseguro\TesteBackend\Controller\CategoryController;
-use Contatoseguro\TesteBackend\Controller\CompanyController;
-use Contatoseguro\TesteBackend\Controller\HomeController;
-use Contatoseguro\TesteBackend\Controller\ProductController;
-use Contatoseguro\TesteBackend\Controller\ReportController;
-use Contatoseguro\TesteBackend\Controller\CommentController;
-use Contatoseguro\TesteBackend\Middleware\RequireAdminUserMiddleware;
+use App\Controller\CategoryController;
+use App\Controller\CompanyController;
+use App\Controller\HomeController;
+use App\Controller\ProductController;
+use App\Controller\ReportController;
+use App\Controller\CommentController;
+use App\Middleware\RequireAdminUserMiddleware;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 

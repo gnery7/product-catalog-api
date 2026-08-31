@@ -1,9 +1,9 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Service;
+namespace App\Service;
 
-use Contatoseguro\TesteBackend\Config\DB;
-use Contatoseguro\TesteBackend\Service\Concerns\BuildsCategoryTranslationClause;
+use App\Config\DB;
+use App\Service\Concerns\BuildsCategoryTranslationClause;
 
 class CategoryService
 {

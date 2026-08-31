@@ -1,6 +1,6 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Exception;
+namespace App\Exception;
 
 class InvalidCompanyException extends \DomainException
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace ContatoSeguro\Tests\Unit\Service;
+namespace Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
-use Contatoseguro\TesteBackend\Service\CategoryService;
+use App\Service\CategoryService;
 
 class CategoryServiceTest extends TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Controller;
+namespace App\Controller;
 
-use Contatoseguro\TesteBackend\Config\DB;
+use App\Config\DB;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

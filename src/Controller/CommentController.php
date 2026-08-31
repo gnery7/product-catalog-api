@@ -1,11 +1,11 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Controller;
+namespace App\Controller;
 
-use Contatoseguro\TesteBackend\Exception\DuplicateLikeException;
-use Contatoseguro\TesteBackend\Exception\ForbiddenActionException;
-use Contatoseguro\TesteBackend\Exception\ProductNotFoundException;
-use Contatoseguro\TesteBackend\Service\CommentService;
+use App\Exception\DuplicateLikeException;
+use App\Exception\ForbiddenActionException;
+use App\Exception\ProductNotFoundException;
+use App\Service\CommentService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

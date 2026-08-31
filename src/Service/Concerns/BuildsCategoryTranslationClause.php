@@ -1,6 +1,6 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Service\Concerns;
+namespace App\Service\Concerns;
 
 trait BuildsCategoryTranslationClause
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Service;
+namespace App\Service;
 
-use Contatoseguro\TesteBackend\Config\DB;
+use App\Config\DB;
 
 class CompanyService
 {

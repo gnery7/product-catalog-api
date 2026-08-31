@@ -1,8 +1,8 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Controller;
+namespace App\Controller;
 
-use Contatoseguro\TesteBackend\Service\CategoryService;
+use App\Service\CategoryService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace ContatoSeguro\Tests\Unit\Service;
+namespace Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
-use Contatoseguro\TesteBackend\Exception\DuplicateLikeException;
-use Contatoseguro\TesteBackend\Exception\ForbiddenActionException;
-use Contatoseguro\TesteBackend\Exception\ProductNotFoundException;
-use Contatoseguro\TesteBackend\Service\CommentService;
+use App\Exception\DuplicateLikeException;
+use App\Exception\ForbiddenActionException;
+use App\Exception\ProductNotFoundException;
+use App\Service\CommentService;
 
 class CommentServiceTest extends TestCase
 {

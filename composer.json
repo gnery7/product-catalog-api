@@ -1,5 +1,6 @@
 {
-    "name": "contatoseguro/teste-backend",
+    "name": "gnery7/product-catalog-api",
+    "description": "API multi-empresa de catalogo de produtos, com categorias traduzidas, estoque e comentarios em Slim 4 + MySQL.",
     "require": {
         "slim/slim": "^4.12",
         "slim/psr7": "^1.6",
@@ -8,7 +9,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Contatoseguro\\TesteBackend\\": "src/"
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     },
     "scripts":{
@@ -25,7 +31,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6",
-        "squizlabs/php_codesniffer": "^4.0",
+        "squizlabs/php_codesniffer": "^4.0.2",
         "phpstan/phpstan": "^2.2"
     }
 }

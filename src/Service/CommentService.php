@@ -1,11 +1,11 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Service;
+namespace App\Service;
 
-use Contatoseguro\TesteBackend\Config\DB;
-use Contatoseguro\TesteBackend\Exception\DuplicateLikeException;
-use Contatoseguro\TesteBackend\Exception\ForbiddenActionException;
-use Contatoseguro\TesteBackend\Exception\ProductNotFoundException;
+use App\Config\DB;
+use App\Exception\DuplicateLikeException;
+use App\Exception\ForbiddenActionException;
+use App\Exception\ProductNotFoundException;
 
 class CommentService
 {

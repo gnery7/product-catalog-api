@@ -1,11 +1,11 @@
 <?php
 
-namespace Contatoseguro\TesteBackend\Service;
+namespace App\Service;
 
-use Contatoseguro\TesteBackend\Config\DB;
-use Contatoseguro\TesteBackend\Exception\InvalidCategoryException;
-use Contatoseguro\TesteBackend\Exception\InvalidCompanyException;
-use Contatoseguro\TesteBackend\Service\Concerns\BuildsCategoryTranslationClause;
+use App\Config\DB;
+use App\Exception\InvalidCategoryException;
+use App\Exception\InvalidCompanyException;
+use App\Service\Concerns\BuildsCategoryTranslationClause;
 
 class ProductService
 {

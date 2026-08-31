@@ -1,11 +1,11 @@
 <?php
 
-namespace ContatoSeguro\Tests\Unit\Service;
+namespace Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
-use Contatoseguro\TesteBackend\Exception\InvalidCategoryException;
-use Contatoseguro\TesteBackend\Exception\InvalidCompanyException;
-use Contatoseguro\TesteBackend\Service\ProductService;
+use App\Exception\InvalidCategoryException;
+use App\Exception\InvalidCompanyException;
+use App\Service\ProductService;
 
 class ProductServiceTest extends TestCase
 {

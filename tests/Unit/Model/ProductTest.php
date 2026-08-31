@@ -1,9 +1,9 @@
 <?php
 
-namespace ContatoSeguro\Tests\Unit\Model;
+namespace Tests\Unit\Model;
 
 use PHPUnit\Framework\TestCase;
-use Contatoseguro\TesteBackend\Model\Product;
+use App\Model\Product;
 
 class ProductTest extends TestCase
 {
