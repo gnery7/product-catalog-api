@@ -341,8 +341,6 @@ Criei também um middleware específico (`RequireAdminUserMiddleware`) que valid
 
 19. Reparei que alguns métodos dos services devolviam tipos diferentes dependendo do caminho: `ProductService::insertOne` podia devolver `true`, `false` ou uma string tipo `'empresa invalida'`; o mesmo acontecia no `CommentService::insertLike` (`'duplicado'`) e no `deleteOne` (`'proibido'`). Isso deixava a assinatura do método enganosa e obrigava quem chamava a comparar com strings mágicas em vez de tratar um tipo de erro de verdade. Troquei esses casos por exceptions de domínio (`InvalidCompanyException`, `InvalidCategoryException`, `DuplicateLikeException`, `ForbiddenActionException`, `ProductNotFoundException`), lançadas pelo service e capturadas no controller pra montar a mesma resposta HTTP de antes. Os métodos agora têm um único tipo de retorno declarado (`bool` ou `\PDOStatement`), e os testes que dependiam das strings foram ajustados pra usar `expectException`.
 
-20. Depois dessas três correções, rodei o `check_deploy.sh` de novo pra confirmar que o lint, o PHPStan e os testes automatizados continuavam passando sem nenhum apontamento novo.
-
 ### Ambiente Docker
 - Subir a aplicação: `docker compose up -d` (porta 8000)
 - Instalar dependências: `docker compose run --rm app composer install`
