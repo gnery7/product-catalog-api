@@ -3,6 +3,9 @@
 namespace ContatoSeguro\Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
+use Contatoseguro\TesteBackend\Exception\DuplicateLikeException;
+use Contatoseguro\TesteBackend\Exception\ForbiddenActionException;
+use Contatoseguro\TesteBackend\Exception\ProductNotFoundException;
 use Contatoseguro\TesteBackend\Service\CommentService;
 
 class CommentServiceTest extends TestCase
@@ -76,26 +79,29 @@ class CommentServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testInsertLikeReturnsDuplicadoOnSecondLikeFromSameUser(): void
+    public function testInsertLikeThrowsDuplicateLikeExceptionOnSecondLikeFromSameUser(): void
     {
         $this->service->insertOne(1, 1, 'comentario');
         $commentId = $this->pdo->lastInsertId();
 
         $firstLike = $this->service->insertLike($commentId, 2);
-        $secondLike = $this->service->insertLike($commentId, 2);
-
         $this->assertTrue($firstLike);
-        $this->assertEquals('duplicado', $secondLike);
+
+        $this->expectException(DuplicateLikeException::class);
+
+        $this->service->insertLike($commentId, 2);
     }
 
-    public function testDeleteOneReturnsProibidoWhenUserIsNotTheAuthor(): void
+    public function testDeleteOneThrowsForbiddenActionExceptionWhenUserIsNotTheAuthor(): void
     {
         $this->service->insertOne(1, 1, 'comentario do rivers');
         $commentId = $this->pdo->lastInsertId();
 
-        $result = $this->service->deleteOne($commentId, 2);
-
-        $this->assertEquals('proibido', $result);
+        try {
+            $this->service->deleteOne($commentId, 2);
+            $this->fail('esperava ForbiddenActionException');
+        } catch (ForbiddenActionException $e) {
+        }
 
         $count = $this->pdo->query("SELECT COUNT(*) FROM comment")->fetchColumn();
         $this->assertEquals(1, $count);
@@ -123,10 +129,10 @@ class CommentServiceTest extends TestCase
         $this->assertEquals(0, $commentCount);
         $this->assertEquals(0, $likeCount);
     }
-    public function testGetByProductReturnsFalseWhenProductDoesNotExist(): void
+    public function testGetByProductThrowsProductNotFoundExceptionWhenProductDoesNotExist(): void
     {
-        $result = $this->service->getByProduct(999);
+        $this->expectException(ProductNotFoundException::class);
 
-        $this->assertFalse($result);
+        $this->service->getByProduct(999);
     }
 }

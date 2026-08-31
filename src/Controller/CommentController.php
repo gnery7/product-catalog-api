@@ -2,6 +2,9 @@
 
 namespace Contatoseguro\TesteBackend\Controller;
 
+use Contatoseguro\TesteBackend\Exception\DuplicateLikeException;
+use Contatoseguro\TesteBackend\Exception\ForbiddenActionException;
+use Contatoseguro\TesteBackend\Exception\ProductNotFoundException;
 use Contatoseguro\TesteBackend\Service\CommentService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -65,14 +68,15 @@ class CommentController
     ): ResponseInterface {
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
-        $result = $this->service->insertLike($args['id'], $adminUserId);
+        try {
+            $result = $this->service->insertLike($args['id'], $adminUserId);
+        } catch (DuplicateLikeException $e) {
+            $response->getBody()->write(json_encode(['error' => 'comentario ja curtido por este usuario']));
+            return $response->withStatus(400);
+        }
 
         if ($result === true) {
             return $response->withStatus(200);
-        }
-        if ($result === 'duplicado') {
-            $response->getBody()->write(json_encode(['error' => 'comentario ja curtido por este usuario']));
-            return $response->withStatus(400);
         }
         $response->getBody()->write(json_encode(['error' => 'comentario nao encontrado']));
         return $response->withStatus(404);
@@ -85,14 +89,15 @@ class CommentController
     ): ResponseInterface {
         $adminUserId = $request->getHeader('admin_user_id')[0];
 
-        $result = $this->service->deleteOne($args['id'], $adminUserId);
+        try {
+            $result = $this->service->deleteOne($args['id'], $adminUserId);
+        } catch (ForbiddenActionException $e) {
+            $response->getBody()->write(json_encode(['error' => 'so e possivel remover os proprios comentarios']));
+            return $response->withStatus(403);
+        }
 
         if ($result === true) {
             return $response->withStatus(200);
-        }
-        if ($result === 'proibido') {
-            $response->getBody()->write(json_encode(['error' => 'so e possivel remover os proprios comentarios']));
-            return $response->withStatus(403);
         }
         $response->getBody()->write(json_encode(['error' => 'comentario nao encontrado']));
         return $response->withStatus(404);
@@ -103,8 +108,9 @@ class CommentController
         ResponseInterface $response,
         array $args
     ): ResponseInterface {
-        $stm = $this->service->getByProduct($args['id']);
-        if ($stm === false) {
+        try {
+            $stm = $this->service->getByProduct($args['id']);
+        } catch (ProductNotFoundException $e) {
             $response->getBody()->write(json_encode(['error' => 'produto nao encontrado']));
             return $response->withStatus(404);
         }

@@ -3,6 +3,9 @@
 namespace Contatoseguro\TesteBackend\Service;
 
 use Contatoseguro\TesteBackend\Config\DB;
+use Contatoseguro\TesteBackend\Exception\DuplicateLikeException;
+use Contatoseguro\TesteBackend\Exception\ForbiddenActionException;
+use Contatoseguro\TesteBackend\Exception\ProductNotFoundException;
 
 class CommentService
 {
@@ -12,7 +15,7 @@ class CommentService
         $this->pdo = $pdo ?? DB::connect();
     }
 
-    public function insertOne($productId, $adminUserId, $content)
+    public function insertOne($productId, $adminUserId, $content): bool
     {
         $stm = $this->pdo->prepare("
             SELECT id
@@ -43,7 +46,7 @@ class CommentService
         ]);
     }
 
-    public function insertReply($parentId, $adminUserId, $content)
+    public function insertReply($parentId, $adminUserId, $content): bool
     {
         $stm = $this->pdo->prepare("
             SELECT product_id
@@ -78,7 +81,7 @@ class CommentService
         ]);
     }
 
-    public function insertLike($commentId, $adminUserId)
+    public function insertLike($commentId, $adminUserId): bool
     {
         $stm = $this->pdo->prepare("
             SELECT id
@@ -101,18 +104,16 @@ class CommentService
         ");
 
         try {
-            $stm->execute([
+            return $stm->execute([
                 ':comment_id' => $commentId,
                 ':admin_user_id' => $adminUserId,
             ]);
         } catch (\PDOException $e) {
-            return 'duplicado';
+            throw new DuplicateLikeException(previous: $e);
         }
-
-        return true;
     }
 
-    public function deleteOne($commentId, $adminUserId)
+    public function deleteOne($commentId, $adminUserId): bool
     {
         $stm = $this->pdo->prepare("
             SELECT admin_user_id
@@ -125,7 +126,7 @@ class CommentService
             return false;
         }
         if ($comment->admin_user_id != $adminUserId) {
-            return 'proibido';
+            throw new ForbiddenActionException();
         }
 
         $ids = [$commentId];
@@ -154,7 +155,7 @@ class CommentService
 
         return true;
     }
-    public function getByProduct($productId)
+    public function getByProduct($productId): \PDOStatement
     {
         $stm = $this->pdo->prepare("
             SELECT id
@@ -163,7 +164,7 @@ class CommentService
         ");
         $stm->execute([':product_id' => $productId]);
         if ($stm->fetch() === false) {
-            return false;
+            throw new ProductNotFoundException();
         }
 
         $stm = $this->pdo->prepare("
