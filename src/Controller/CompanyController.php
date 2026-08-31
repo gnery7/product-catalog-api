@@ -32,8 +32,8 @@ class CompanyController
         ResponseInterface $response,
         array $args
     ): ResponseInterface {
-        $stm = $this->pdo->prepare("SELECT * FROM company WHERE id = {$args['id']}");
-        $stm->execute();
+        $stm = $this->pdo->prepare("SELECT * FROM company WHERE id = :id");
+        $stm->execute([':id' => $args['id']]);
 
         $response->getBody()->write(json_encode($stm->fetch()));
         return $response->withStatus(200);
